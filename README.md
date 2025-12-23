@@ -45,6 +45,7 @@ npm run dev
 
 ## Workflow
 
-- Always go mod tidy before pushing backend changes to ensure go.sum is up to date.
+- Always `go mod tidy` before pushing backend changes to ensure go.sum is up to date.
+- Always run `gofmt` and `prettier` before pushing to ensure proper formating (it is recommended to set up your IDE to format on save to make this easier).
 - **Naming Convention:** Use feature/, fix/, or refactor/ prefixes for branches.
 - **Code Reviews:** At least one other person must approve a Pull Request before merging to `main`.
