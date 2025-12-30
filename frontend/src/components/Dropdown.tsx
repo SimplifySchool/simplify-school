@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 interface Option {
     value: string
     label?: string
-    style?: React.CSSProperties
     className?: string
 }
 
@@ -22,7 +21,6 @@ function normalizeOptions(opts: (Option | string)[]): Option[] {
             : {
                   label: o.label ?? o.value,
                   value: o.value,
-                  style: o.style,
                   className: o.className,
               }
     )
@@ -42,6 +40,11 @@ export default function Dropdown({
     )
     const selectedValue = isControlled ? value ?? '' : internalValue
 
+    const currClassName = opts.find((opt) => {
+        const val = typeof opt === 'string' ? opt : opt.value
+        return val === selectedValue
+    })?.className
+
     function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
         const v = e.target.value
         if (!isControlled) setInternalValue(v)
@@ -54,7 +57,7 @@ export default function Dropdown({
                 aria-label={placeholder}
                 value={selectedValue ?? ''}
                 onChange={handleChange}
-                className="appearance-none w-48 px-3 py-2 rounded-lg bg-white text-gray-900 shadow-sm ring-1 ring-inset ring-gray-200 hover:shadow-md transition focus:outline-none focus:ring-2 focus:ring-primary-400"
+                className={`appearance-none w-48 px-3 py-2 rounded-4xl bg-white shadow-sm ring-1 ring-inset ring-gray-200 hover:shadow-md transition focus:outline-none focus:ring-2 focus:ring-primary-400 ${currClassName}`}
             >
                 <option value="" disabled hidden>
                     {placeholder}
@@ -63,7 +66,6 @@ export default function Dropdown({
                     <option
                         key={opt.value}
                         value={opt.value}
-                        style={opt.style}
                         className={opt.className}
                     >
                         {opt.label}
