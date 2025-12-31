@@ -36,13 +36,10 @@ func main() {
 	}
 	defer pgxConn.Close()
 
-	pgxConn.Ping(context.Background())
+	err = pgxConn.Ping(context.Background())
 	if err != nil {
 		log.Fatal("Unable to connect to database: ", err)
 	}
-	id := 0
-	pgxConn.QueryRow(context.Background(), "INSERT INTO assignments (title, description) VALUES ($1, $2) RETURNING id", "Test Assignment", "This is a test assignment").Scan(&id)
-	log.Println("Inserted assignment with ID:", id)
 
 	app.Listen(":3000")
 }
