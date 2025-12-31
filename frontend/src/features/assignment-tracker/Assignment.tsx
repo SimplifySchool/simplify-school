@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Dropdown from '../../components/Dropdown'
+import Button from '../../components/Button'
 
 type AssignmentStatus = 'To Do' | 'Doing' | 'Done'
 
@@ -17,7 +18,7 @@ function Assignment({
     const [status, setStatus] = useState<AssignmentStatus>('To Do')
 
     return (
-        <div className="flex items-center justify-between p-4 h-18 bg-white border rounded-4xl border-slate-200 hover:shadow-md transition-colors shadow-sm">
+        <div className="flex items-center justify-between p-4 h-28 bg-white border rounded-4xl border-slate-200 hover:shadow-sm transition-colors shadow-md">
             <div className="flex flex-col">
                 <span className="text-sm font-semibold text-slate-900">
                     {initialName}
@@ -30,16 +31,24 @@ function Assignment({
                 {desc}
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-row items-center gap-3">
                 <Dropdown
                     options={[
-                        { value: 'To Do', className: 'text-red-500' },
-                        { value: 'Doing', className: 'text-yellow-500' },
+                        { value: 'To do', className: 'text-red-500' },
+                        { value: 'In-progress', className: 'text-yellow-500' },
                         { value: 'Done', className: 'text-green-500' },
                     ]}
                     value={status}
                     onChange={(val) => setStatus(val as AssignmentStatus)}
                 />
+                <Button
+                    variant='outlined'
+                    color='secondary'
+                    size='md'
+                    icon = {<span className="material-symbols-outlined text-black !text-[20px]">edit</span>}
+                    iconPosition='left'
+                >
+                </Button>
             </div>
         </div>
     )
