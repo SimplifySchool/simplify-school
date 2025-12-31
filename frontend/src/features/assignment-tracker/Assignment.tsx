@@ -18,7 +18,7 @@ function Assignment({
     const [status, setStatus] = useState<AssignmentStatus>('To Do')
 
     return (
-        <div className="flex items-center justify-between p-4 h-28 bg-white border rounded-4xl border-slate-200 hover:shadow-sm transition-colors shadow-md">
+        <div className="flex items-center justify-between p-4 h-20 bg-white border rounded-4xl border-slate-200 hover:shadow-lg transition-colors shadow-xl">
             <div className="flex flex-col">
                 <span className="text-sm font-semibold text-slate-900">
                     {initialName}
