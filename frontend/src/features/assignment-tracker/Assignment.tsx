@@ -42,13 +42,16 @@ function Assignment({
                     onChange={(val) => setStatus(val as AssignmentStatus)}
                 />
                 <Button
-                    variant='outlined'
-                    color='secondary'
-                    size='md'
-                    icon = {<span className="material-symbols-outlined text-black !text-[20px]">edit</span>}
-                    iconPosition='left'
-                >
-                </Button>
+                    variant="outlined"
+                    color="secondary"
+                    size="md"
+                    icon={
+                        <span className="material-symbols-outlined text-black !text-[20px]">
+                            edit
+                        </span>
+                    }
+                    iconPosition="left"
+                ></Button>
             </div>
         </div>
     )
