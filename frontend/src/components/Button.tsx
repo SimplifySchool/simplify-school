@@ -2,8 +2,8 @@ import React from 'react'
 
 export interface ButtonProps
     extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    icon?: React.ReactNode,
-    iconPosition?: 'left'  | 'right'
+    icon?: React.ReactNode
+    iconPosition?: 'left' | 'right'
     iconOnly?: boolean
     variant?: 'contained' | 'outlined' | 'text' | 'tonal'
     color?: 'primary' | 'secondary'
@@ -22,14 +22,13 @@ export function Button({
     className = '',
     ...props
 }: ButtonProps) {
-
     if (icon && !children) {
         iconOnly = true
     }
 
     const baseStyles =
         'inline-flex items-center justify-center font-sans font-medium tracking-wide transition-all duration-200 active:scale-95 focus:outline-none rounded-full'
-    
+
     const variants = {
         contained: {
             primary:
@@ -59,32 +58,35 @@ export function Button({
     }
 
     const iconOnlySizes = {
-    sm: 'h-8 w-8',
-    md: 'h-10 w-10',
-    lg: 'h-12 w-12',
-  }
+        sm: 'h-8 w-8',
+        md: 'h-10 w-10',
+        lg: 'h-12 w-12',
+    }
 
     const variantStyles = variants[variant][color]
-    const sizeStyles = iconOnly ? iconOnlySizes[size] : sizes[size] 
+    const sizeStyles = iconOnly ? iconOnlySizes[size] : sizes[size]
 
     const combinedClasses = `${baseStyles} ${variantStyles} ${sizeStyles} ${className}`
-    console.log(iconOnly) 
+    console.log(iconOnly)
     return (
         <button className={combinedClasses} {...props}>
             {!iconOnly && icon && iconPosition == 'left' && (
-                <span className='flex h-5 w-5 p-4 items-center justify-center'>{icon}</span>
+                <span className="flex h-5 w-5 p-4 items-center justify-center">
+                    {icon}
+                </span>
             )}
-            
+
             {!iconOnly && children}
 
             {!iconOnly && icon && iconPosition == 'right' && (
-                <span className='flex h-5 w-5 items-center justify-center'>{icon}</span>
+                <span className="flex h-5 w-5 items-center justify-center">
+                    {icon}
+                </span>
             )}
 
             {iconOnly && icon}
         </button>
     )
-
 }
 
 export default Button
