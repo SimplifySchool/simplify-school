@@ -67,7 +67,7 @@ export function Button({
     const sizeStyles = iconOnly ? iconOnlySizes[size] : sizes[size]
 
     const combinedClasses = `${baseStyles} ${variantStyles} ${sizeStyles} ${className}`
-    console.log(iconOnly)
+
     return (
         <button className={combinedClasses} {...props}>
             {!iconOnly && icon && iconPosition == 'left' && (

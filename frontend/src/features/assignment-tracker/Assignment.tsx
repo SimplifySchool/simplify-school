@@ -92,7 +92,7 @@ function Assignment({
                             color="secondary"
                             size="md"
                             icon={
-                                <span className="material-symbols-outlined text-black !text-[20px]">
+                                <span className="material-symbols-outlined text-black text-[20px]!">
                                     edit
                                 </span>
                             }
@@ -104,7 +104,7 @@ function Assignment({
                             color="secondary"
                             size="md"
                             icon={
-                                <span className="material-symbols-outlined text-black !text-[20px]">
+                                <span className="material-symbols-outlined text-black text-[20px]!">
                                     delete
                                 </span>
                             }
@@ -148,6 +148,11 @@ function Assignment({
                                 onChange={(e) =>
                                     changeDraftName(e.target.value)
                                 }
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        saveAndExit(draftName)
+                                    }
+                                }}
                                 error={textError}
                             ></TextField>
                         </div>
