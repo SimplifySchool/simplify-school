@@ -1,5 +1,5 @@
 interface DialogHeaderProps {
-    title?: string
+    title?: string | React.ReactNode
     titleProperties?: string
     extraClassNames?: string
     underlinedSeperator?: boolean

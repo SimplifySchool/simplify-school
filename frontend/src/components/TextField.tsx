@@ -5,6 +5,7 @@ interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
     height?: 'sm' | 'md' | 'lg'
     width?: 'sm' | 'md' | 'lg'
     hAlign?: 'left' | 'center' | 'right'
+    error?: string
 }
 
 export function TextField({
@@ -13,6 +14,7 @@ export function TextField({
     width = 'md',
     hAlign = 'left',
     className = '',
+    error = '',
     ...props
 }: TextFieldProps) {
     const baseClass = 'p-2 focus:outline-none'
@@ -44,8 +46,9 @@ export function TextField({
     const finalClassName = `${baseClass} ${variantClassName[variant]} ${textFieldHeight[height]} ${textFieldWidth[width]} ${horAlign[hAlign]} ${className}`
 
     return (
-        <label>
-            <input type="text" className={finalClassName} {...props} />
+        <label className="flex flex-col items-start">
+            <input type="text" className={finalClassName} {...props}></input>
+            <span className="mx-3 text-red-500 h-4">{error}</span>
         </label>
     )
 }
