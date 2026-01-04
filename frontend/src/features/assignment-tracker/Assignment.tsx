@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Dropdown from '../../components/Dropdown'
 import Button from '../../components/Button'
 import { Dialog } from '../../components/DialogBox/Dialog'
@@ -13,12 +13,14 @@ interface AssignmentProps {
     initialName?: string
     desc?: string
     dueDate?: string
+    onDelete: () => void
 }
 
 function Assignment({
     initialName = 'New Assignment',
     desc = 'There is no description provided.',
     dueDate = 'No date set',
+    onDelete,
 }: AssignmentProps) {
     const [status, setStatus] = useState<AssignmentStatus>('To Do')
     const [visible, setVisible] = useState(false)
@@ -84,18 +86,32 @@ function Assignment({
                         value={status}
                         onChange={(val) => setStatus(val as AssignmentStatus)}
                     />
-                    <Button
-                        variant="outlined"
-                        color="secondary"
-                        size="md"
-                        icon={
-                            <span className="material-symbols-outlined text-black !text-[20px]">
-                                edit
-                            </span>
-                        }
-                        iconPosition="left"
-                        onClick={showEditDialog}
-                    ></Button>
+                    <div className="flex flex-row gap-1">
+                        <Button
+                            variant="outlined"
+                            color="secondary"
+                            size="md"
+                            icon={
+                                <span className="material-symbols-outlined text-black !text-[20px]">
+                                    edit
+                                </span>
+                            }
+                            iconPosition="left"
+                            onClick={showEditDialog}
+                        ></Button>
+                        <Button
+                            variant="outlined"
+                            color="secondary"
+                            size="md"
+                            icon={
+                                <span className="material-symbols-outlined text-black !text-[20px]">
+                                    delete
+                                </span>
+                            }
+                            iconPosition="left"
+                            onClick={onDelete}
+                        ></Button>
+                    </div>
                 </div>
             </div>
 

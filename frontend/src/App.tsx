@@ -1,14 +1,10 @@
 import './App.css'
-import Assignment from './features/assignment-tracker/Assignment'
+import { AssignmentPage } from './features/assignment-tracker/AssignmentPage'
 
 function App() {
-    function hi() {
-        console.log('hi')
-    }
-
     return (
         <>
-            <Assignment />
+            <AssignmentPage />
         </>
     )
 }
