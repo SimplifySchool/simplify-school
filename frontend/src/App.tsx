@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import Button from './components/Button'
 import { AssignmentPage } from './features/assignment-tracker/AssignmentPage'
+import { SchedulePage } from './features/assignment-tracker/SchedulePage'
 
 function App() {
     const [page, setPage] = useState(<AssignmentPage />)
@@ -15,12 +16,9 @@ function App() {
     }
 
     function sendToSchedulePage() {
-        setPage(
-            <>
-                <div className="">Welcome to your schedule</div>
-            </>
-        )
+        setPage(<SchedulePage />)
     }
+    
     function sendToAssignmentsPage() {
         setPage(<AssignmentPage />)
     }
