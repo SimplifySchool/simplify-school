@@ -26,6 +26,7 @@ function Assignment({
     const [visible, setVisible] = useState(false)
     const [draftName, setDraftName] = useState(initialName)
     const [assignmentName, setAssignmentName] = useState(initialName)
+    const [assignmentDesc, setAssignmentDesc] = useState(desc)
     const [textError, setTextError] = useState('')
 
     function saveAndExit(name: string) {
@@ -70,7 +71,7 @@ function Assignment({
 
                 <div className="text-sm text-slate-600">
                     <b>Desc: </b>
-                    {desc}
+                    {assignmentDesc}
                 </div>
 
                 <div className="flex flex-row items-center gap-3">
