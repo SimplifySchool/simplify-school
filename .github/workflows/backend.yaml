@@ -54,7 +54,7 @@ jobs:
         run: go mod download
 
       - name: Run Tests
-        run: go test -json > testresults.json
+        run: go test -json ./... > testresults.json
 
       - name: Upload Test Report
         uses: dorny/test-reporter@v2
