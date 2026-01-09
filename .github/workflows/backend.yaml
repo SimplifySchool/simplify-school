@@ -54,7 +54,7 @@ jobs:
         run: go mod download
 
       - name: Run Tests
-        run: go test --coverageprofile=coverage.out -json ./... > testresults.json
+        run: go test --coverprofile=coverage -json ./... > testresults.json
         continue-on-error: true
 
       - name: Debug File Generation
