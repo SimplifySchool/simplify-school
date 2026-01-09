@@ -53,3 +53,7 @@ go.work.sum
 
 # db data
 pgdata
+
+junit.xml
+coverage.xml
+coverage/
