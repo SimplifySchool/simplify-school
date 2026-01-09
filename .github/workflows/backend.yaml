@@ -67,9 +67,9 @@ jobs:
 
       - name: Upload Test Report
         uses: dorny/test-reporter@v2
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: Backend Test Results
-          path: backend/testresults.json
+          path: testresults.json
           reporter: golang-json
           fail-on-error: false
