@@ -70,6 +70,6 @@ jobs:
         if: ${{ !cancelled() }}
         with:
           name: Backend Test Results
-          path: testresults.json
+          path: backend/testresults.json
           reporter: golang-json
           fail-on-error: false

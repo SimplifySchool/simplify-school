@@ -55,7 +55,7 @@ jobs:
         run: npm test
 
       - name: Upload Test Report
-        uses: dorny/test-reporter@v2
+        uses: dorny/test-reporter@v1
         if: always()
         with:
           name: Frontend Test Results
