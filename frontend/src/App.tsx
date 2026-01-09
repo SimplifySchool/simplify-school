@@ -2,7 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import Button from './components/Button'
 import { AssignmentPage } from './features/assignment-tracker/AssignmentPage'
-import { SchedulePage } from './features/assignment-tracker/SchedulePage'
+import { SchedulePage } from './features/schedule/SchedulePage'
 
 function App() {
     const [page, setPage] = useState(<AssignmentPage />)
