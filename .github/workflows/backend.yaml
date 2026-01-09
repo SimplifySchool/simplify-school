@@ -53,12 +53,12 @@ jobs:
         run: go mod download
 
       - name: Run Tests
-        run: go test -v ./... -coverprofile=coverage.out
+        run: go test -json > testresults.json
 
       - name: Upload Test Report
         uses: dorny/test-reporter@v1
         if: always()
         with:
           name: Backend Test Results
-          path: backend/coverage.out
-          reporter: go-coverage
+          path: backend/testresults.json
+          reporter: golang-json
