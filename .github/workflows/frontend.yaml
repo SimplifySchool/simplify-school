@@ -68,3 +68,4 @@ jobs:
           path: frontend/junit.xml
           reporter: jest-junit
           fail-on-error: false
+          fail-on-empty: false

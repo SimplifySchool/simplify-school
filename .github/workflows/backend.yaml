@@ -85,3 +85,4 @@ jobs:
           path: backend/testresults.json
           reporter: golang-json
           fail-on-error: false
+          fail-on-empty: false
