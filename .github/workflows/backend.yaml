@@ -26,7 +26,10 @@ jobs:
       - name: Install Dependencies
         run: go mod download
       - name: Run Linter
-        run: golangci-lint run ./...
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          args: --timeout 5m
   test:
     name: Run Backend Tests
     runs-on: ubuntu-latest
