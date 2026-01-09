@@ -56,4 +56,5 @@ pgdata
 
 junit.xml
 coverage.xml
+coverage
 coverage/

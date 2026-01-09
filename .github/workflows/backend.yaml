@@ -1,0 +1,58 @@
+name: Backend Checks
+
+on:
+  pull_request:
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend.yaml"
+
+defaults:
+  run:
+    working-directory: ./backend
+
+jobs:
+  lint:
+    name: Lint Backend Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.25"
+      - name: Install Dependencies
+        run: go mod download
+      - name: Run Linter
+        run: golangci-lint run ./...
+  test:
+    name: Run Backend Tests
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      checks: write
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.25"
+
+      - name: Install Dependencies
+        run: go mod download
+
+      - name: Run Tests
+        run: go test -v ./... -coverprofile=coverage.out
+
+      - name: Upload Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Backend Test Results
+          path: backend/coverage.out
+          reporter: go-coverage
