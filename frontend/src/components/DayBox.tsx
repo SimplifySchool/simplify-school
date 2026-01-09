@@ -1,10 +1,30 @@
+import React, { useState } from 'react';
+
 export interface DayBoxProps{
     num: number
 }
 
 export function DayBox({num}: DayBoxProps){
+    
+    const [isHovered, setIsHovered] = useState(false);
+  
+    const baseDayStyle = {
+        backgroundColor: 'white',
+        transition: 'background-color 0.3s ease',
+        cursor: 'pointer'
+    }
+   
+    const hoverDayStyle = {
+        backgroundColor: 'lightgrey'
+    }
+    
     return(
-        <div className="border-2">
+        <div
+           style={isHovered ? { ...baseDayStyle, ...hoverDayStyle } : baseDayStyle}
+           onClick={() => alert('Hi')}
+           onMouseEnter={() => setIsHovered(true)}
+           onMouseLeave={() => setIsHovered(false)} 
+           className="text-left text-3xl pl-2 pt-1 border-2 w-[172px] h-[172px]">
             {num}
         </div>
     )

@@ -4,7 +4,7 @@ export interface DayNamesProps{
 
 export function DayNames({dayName}: DayNamesProps){
     return(
-        <div className="border-2">
+        <div className="text-2xl font-semibold border-2 p-2">
             {dayName}
         </div>
     )
