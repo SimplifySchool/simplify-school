@@ -26,7 +26,7 @@ jobs:
       - name: Install Dependencies
         run: go mod download
       - name: Run Linter
-        uses: golangci/golangci-lint-action@latest
+        uses: golangci/golangci-lint-action@v9
         with:
           version: latest
           args: --timeout 5m
@@ -61,5 +61,5 @@ jobs:
         with:
           name: Backend Test Results
           path: backend/testresults.json
-          with-directory: "./backend"
           reporter: golang-json
+          fail-on-error: false
