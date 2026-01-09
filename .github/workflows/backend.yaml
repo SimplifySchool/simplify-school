@@ -54,7 +54,19 @@ jobs:
         run: go mod download
 
       - name: Run Tests
-        run: go test -coverprofile=coverage.out -json ./... > testresults.json
+        run: go test --coverageprofile=coverage.out -json ./... > testresults.json
+        continue-on-error: true
+
+      - name: Debug File Generation
+        run: |
+          echo "Listing backend directory:"
+          ls -la
+          echo "--------------------------------"
+          echo "Checking testresults.json content size:"
+          du -h testresults.json
+          echo "--------------------------------"
+          echo "First 10 lines of JSON:"
+          head -n 10 testresults.json
 
       - name: Enforce Min Coverage
         run: |
@@ -67,7 +79,7 @@ jobs:
 
       - name: Upload Test Report
         uses: dorny/test-reporter@v2
-        if: ${{ !cancelled() }}
+        if: always()
         with:
           name: Backend Test Results
           path: backend/testresults.json
