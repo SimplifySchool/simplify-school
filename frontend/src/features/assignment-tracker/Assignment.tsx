@@ -25,19 +25,36 @@ function Assignment({
     const [status, setStatus] = useState<AssignmentStatus>('To Do')
     const [visible, setVisible] = useState(false)
     const [draftName, setDraftName] = useState(initialName)
+    const [draftDesc, setDraftDesc] = useState(desc)
     const [assignmentName, setAssignmentName] = useState(initialName)
+    const [assignmentDesc, setAssignmentDesc] = useState(desc)
     const [textError, setTextError] = useState('')
+    const [descError, setDescError] = useState('')
 
-    function saveAndExit(name: string) {
+    function saveAndExit(name: string, desc: string) {
         //Input validation!
         if (name.trim().length === 0) {
             setTextError('Invalid Assignment Name')
             return
         }
 
-        changeAssignmentName(name.trim())
+        if (desc.trim().length === 0) {
+            setDescError('Invalid Description')
+            return
+        }
+
+        changeAssignmentName(name)
+        changeAssignmentDesc(desc)
         hideEditDialog()
         setTextError('')
+    }
+
+    function changeDraftDesc(desc: string) {
+        setDraftDesc(desc.trim())
+    }
+
+    function changeAssignmentDesc(desc: string) {
+        setAssignmentDesc(desc)
     }
 
     function changeDraftName(name: string) {
@@ -70,7 +87,7 @@ function Assignment({
 
                 <div className="text-sm text-slate-600">
                     <b>Desc: </b>
-                    {desc}
+                    {assignmentDesc}
                 </div>
 
                 <div className="flex flex-row items-center gap-3">
@@ -150,7 +167,7 @@ function Assignment({
                                 }
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
-                                        saveAndExit(draftName)
+                                        saveAndExit(draftName, draftDesc)
                                     }
                                 }}
                                 error={textError}
@@ -163,6 +180,15 @@ function Assignment({
                             <TextField
                                 className="w-45! focus:border-blue-400!"
                                 placeholder="Desc"
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        saveAndExit(draftName, draftDesc)
+                                    }
+                                }}
+                                onChange={(e) =>
+                                    changeDraftDesc(e.target.value)
+                                }
+                                error={descError}
                             ></TextField>
                         </div>
                     </div>
@@ -172,7 +198,7 @@ function Assignment({
                     <Button
                         variant="outlined"
                         className="absolute bottom-5 right-5 font-bold! text-black! "
-                        onClick={() => saveAndExit(draftName)}
+                        onClick={() => saveAndExit(draftName, draftDesc)}
                     >
                         Save & Exit
                     </Button>
