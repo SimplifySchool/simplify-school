@@ -42,7 +42,12 @@ func main() {
 		log.Fatal("Unable to connect to database: ", err)
 	}
 
-	assignments.RegisterRoutes(app)
+	repo := assignments.NewRepository(pgxConn)
+	service := assignments.NewService(repo)
+	handler := assignments.NewHandler(service)
+
+	app.Get("/assignments", handler.GetAssignments)
+	app.Post("/assignments", handler.CreateAssignment)
 
 	app.Listen(":3000")
 }

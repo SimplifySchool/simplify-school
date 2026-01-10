@@ -72,3 +72,14 @@ type AssignmentResponse struct {
 	DueDate          *time.Time       `json:"due_date"`
 	CreatedAt        time.Time        `json:"created_at"`
 }
+
+/*
+Struct that represents an assignment input (Frontend's input for a POST request)
+  - Similiar to the Assignment struct except without the ID, UserID, CreatedAt, and CompletionStatus
+  - The data the client can customize when making an assignment for the first time
+*/
+type AssignmentInput struct {
+	Title       string     `json:"title"`
+	Description string     `json:"description"`
+	DueDate     *time.Time `json:"due_date"`
+}

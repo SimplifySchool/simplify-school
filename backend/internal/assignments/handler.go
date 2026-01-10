@@ -1,39 +1,51 @@
 package assignments
 
 import (
-	"time"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func RegisterRoutes(app *fiber.App) {
-	app.Get("/assignments", getAssignments)
+type Handler struct {
+	service *Service
 }
 
-func getAssignments(c *fiber.Ctx) error {
-	assignments := []Assignment{
-		{
-			ID:               1,
-			Title:            "Math Homework",
-			Description:      "Chapter 5 problems",
-			CompletionStatus: ToDo,
-			CreatedAt:        time.Now(),
-			UserID:           1,
-		},
-		{
-			ID:               2,
-			Title:            "Physics Lab",
-			Description:      "Projectile motion",
-			CompletionStatus: Doing,
-			CreatedAt:        time.Now(),
-			UserID:           1,
-		},
+func NewHandler(service *Service) *Handler {
+	return &Handler{service: service}
+}
+
+func (h *Handler) CreateAssignment(c *fiber.Ctx) error {
+	var req AssignmentInput
+
+	if err := c.BodyParser(&req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid JSON")
 	}
 
-	responses := make([]AssignmentResponse, 0, len(assignments))
-	for _, a := range assignments {
-		responses = append(responses, ToAssignmentResponse(a))
+	if strings.TrimSpace(req.Title) == "" { // Frontend already checks for this but we still check
+		return fiber.NewError(fiber.StatusBadGateway, "Title is required")
 	}
 
-	return c.JSON(responses)
+	if strings.TrimSpace(req.Title) == "" { // Frontend already checks for this but we still check
+		return fiber.NewError(fiber.StatusBadGateway, "Description is required")
+	}
+
+	mockUserID := 1 // We use a mock user ID for now because auth has not been implemented yet
+
+	res, err := h.service.CreateAssignment(c.Context(), req, mockUserID)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(res)
+}
+
+func (h *Handler) GetAssignments(c *fiber.Ctx) error {
+	mockUserID := 1 // Again, we use a mock user ID here because we have not implemented auth yet
+
+	assignments, err := h.service.GetAssignments(c.Context(), mockUserID)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return c.JSON(assignments)
 }
