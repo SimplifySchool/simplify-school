@@ -30,7 +30,7 @@ Gets all the assignments that a user has created
 func (r *Repository) getAssignments(ctx context.Context, userID int) ([]Assignment, error) {
 
 	query := `
-        SELECT id, title, description, completetion_status, due_date, created_at, user_id
+        SELECT id, title, description, completion_status, due_date, created_at, user_id
         FROM assignments
         WHERE user_id = $1
         ORDER BY created_at DESC
