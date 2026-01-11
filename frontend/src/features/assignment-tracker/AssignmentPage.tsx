@@ -19,7 +19,6 @@ export interface AssignmentData {
 export interface CreateAssignmentPayload {
     title: string
     description: string
-    completion_status: 'To Do' | 'Doing' | 'Done'
     due_date: string | null
 }
 
@@ -50,40 +49,9 @@ export function AssignmentPage() {
         setDraftDesc(name.trim())
     }
 
-    /**
-     * Creates the assignment with the given name and decription
-     * @param name The name of the assignment
-     * @returns
-     */
-    function saveAndExit(name: string, desc: string) {
-        console.log('ran')
-        if (name.trim().length === 0) {
-            setAssignmentNameError('Invalid Assignment Name!')
-            return
-        }
-
-        if (desc.trim().length === 0) {
-            setAssignmentDescError('Invalid Assignment Name!')
-            return
-        }
-
-        setAssignmentNameError('')
-        setAssignments((prev) => [
-            ...prev,
-            {
-                id: Date.now(),
-                title: name,
-                description: desc,
-                completion_status: 'To Do',
-                due_date: null,
-                created_at: `${Date.now()}`,
-            },
-        ])
-
-        hideEditDialog()
-    }
-
-    async function createAssignment(payload: CreateAssignmentPayload) {
+    async function createAssignment(
+        payload: CreateAssignmentPayload
+    ): Promise<AssignmentData> {
         const res = await fetch('http://localhost:3000/assignments', {
             method: 'POST',
             headers: {
@@ -96,8 +64,45 @@ export function AssignmentPage() {
             throw new Error('Failed to create assignment')
         }
 
-        const data = (await res.json()) as AssignmentData[]
+        const data = (await res.json()) as AssignmentData
         return data
+    }
+
+    /**
+     * Creates the assignment with the given name and decription
+     * @param name The name of the assignment
+     * @returns
+     */
+    async function saveAndExit(name: string, desc: string) {
+        if (name.trim().length === 0) {
+            setAssignmentNameError('Invalid Assignment Name!')
+            return
+        } else {
+            setAssignmentNameError('')
+        }
+
+        if (desc.trim().length === 0) {
+            setAssignmentDescError('Invalid Assignment Description!')
+            return
+        } else {
+            setAssignmentDescError('')
+        }
+
+        setDraftName('')
+        setDraftDesc('')
+
+        try {
+            const newAssignment = await createAssignment({
+                title: name,
+                description: desc,
+                due_date: null,
+            })
+
+            setAssignments((prev) => [...prev, newAssignment])
+            hideEditDialog()
+        } catch (err) {
+            console.error(err)
+        }
     }
 
     function addAssignment() {
