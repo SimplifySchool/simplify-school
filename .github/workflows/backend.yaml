@@ -36,7 +36,7 @@ jobs:
     name: Run Backend Tests
     runs-on: ubuntu-latest
     permissions:
-      actions: read
+      actions: write
       checks: write
       contents: read
       pull-requests: write
@@ -82,7 +82,8 @@ jobs:
         if: always()
         with:
           name: Backend Test Results
-          path: backend/testresults.json
+          working-directory: backend
+          path: testresults.json
           reporter: golang-json
           fail-on-error: false
           fail-on-empty: false
