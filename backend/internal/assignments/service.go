@@ -41,7 +41,7 @@ func (s *Service) CreateAssignment(ctx context.Context, req AssignmentInput, use
 }
 
 func (s *Service) GetAssignments(ctx context.Context, userID int) ([]AssignmentResponse, error) {
-	assignments, err := s.repo.getAssignments(ctx, userID)
+	assignments, err := s.repo.GetAssignments(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -52,4 +52,8 @@ func (s *Service) GetAssignments(ctx context.Context, userID int) ([]AssignmentR
 	}
 
 	return res, nil
+}
+
+func (s *Service) DeleteAssignment(ctx context.Context, ID int, userID int) error {
+	return s.repo.DeleteAssignment(ctx, ID, userID)
 }

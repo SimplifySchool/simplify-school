@@ -2,6 +2,7 @@ package assignments
 
 import (
 	"context"
+	"errors"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -27,7 +28,7 @@ Gets all the assignments that a user has created
 	@param userID (int) The ID of the user
 	@return ([]Assignment, error) Returns an array of assignment data that will be displayed on the frontend, nil if an error is not nil
 */
-func (r *Repository) getAssignments(ctx context.Context, userID int) ([]Assignment, error) {
+func (r *Repository) GetAssignments(ctx context.Context, userID int) ([]Assignment, error) {
 
 	query := `
         SELECT id, title, description, completion_status, due_date, created_at, user_id
@@ -99,4 +100,26 @@ func (r *Repository) InsertAssignment(ctx context.Context, a Assignment) (int, e
 	}
 
 	return id, nil
+}
+
+func (r *Repository) DeleteAssignment(ctx context.Context, ID int, userID int) error {
+
+	query := `
+	DELETE FROM assignments
+	WHERE user_id = $1 AND id = $2
+	`
+
+	tag, err := r.db.Exec(ctx, query,
+		userID,
+		ID)
+
+	if err != nil {
+		return err
+	}
+
+	if tag.RowsAffected() == 0 {
+		return errors.New("Assignment not found")
+	}
+
+	return nil
 }
