@@ -22,7 +22,14 @@ export function WeeklyView() {
         return Array.from({ length: 7 }, (_, i) => {
             const date = addDays(start, i)
 
-            return <DayBox key={i} num={date.getDate()} isCurrentMonth={true} />
+            return (
+                <DayBox
+                    key={i}
+                    num={date.getDate()}
+                    isCurrentMonth={true}
+                    date={date}
+                />
+            )
         })
     }
 
