@@ -18,14 +18,14 @@ function App() {
     function sendToSchedulePage() {
         setPage(<SchedulePage />)
     }
-    
+
     function sendToAssignmentsPage() {
         setPage(<AssignmentPage />)
     }
 
     return (
         <>
-            <div className="flex flex-col gap-20">
+            <div className="flex flex-col gap-7.5">
                 <div className="flex flex-row gap-5">
                     <Button
                         variant="outlined"
