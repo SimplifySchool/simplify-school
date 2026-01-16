@@ -57,3 +57,13 @@ func (s *Service) GetAssignments(ctx context.Context, userID int) ([]AssignmentR
 func (s *Service) DeleteAssignment(ctx context.Context, ID int, userID int) error {
 	return s.repo.DeleteAssignment(ctx, ID, userID)
 }
+
+func (s *Service) UpdateAssignment(ctx context.Context, a Assignment) (AssignmentResponse, error) {
+	newAssignment, err := s.repo.PutAssignment(ctx, a)
+
+	if err != nil {
+		return AssignmentResponse{}, err
+	}
+
+	return ToAssignmentResponse(newAssignment), nil
+}

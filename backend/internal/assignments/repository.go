@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -122,4 +123,41 @@ func (r *Repository) DeleteAssignment(ctx context.Context, ID int, userID int) e
 	}
 
 	return nil
+}
+
+func (r *Repository) PutAssignment(ctx context.Context, a Assignment) (Assignment, error) {
+
+	query := `
+	UPDATE assignments
+	SET
+		title = $2,
+		description = $3,
+		completion_status = $4,
+		due_date = $5,
+	WHERE id = $1 AND user_id = $6
+	RETURNING title, description, completion_status, due_date;
+	`
+	rA := Assignment{ // returnedAssignment
+		ID:     a.ID,
+		UserID: a.UserID,
+	}
+
+	err := r.db.QueryRow(ctx, query,
+		a.ID,
+		a.Title,
+		a.Description,
+		a.CompletionStatus,
+		a.DueDate,
+		a.CreatedAt,
+		a.UserID,
+	).Scan(&rA.Title, &rA.Description, &rA.CompletionStatus, &rA.DueDate, &rA.CreatedAt)
+
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return Assignment{}, errors.New("Assignment not found")
+		}
+		return Assignment{}, err
+	}
+
+	return rA, nil
 }
