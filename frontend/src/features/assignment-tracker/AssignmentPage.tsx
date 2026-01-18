@@ -16,9 +16,10 @@ export interface AssignmentData {
     created_at: string
 }
 
-export interface CreateAssignmentPayload {
+export interface AssignmentModifiable {
     title: string
     description: string
+    completion_status: 'To Do' | 'Doing' | 'Done'
     due_date: string | null
 }
 
@@ -50,7 +51,7 @@ export function AssignmentPage() {
     }
 
     async function createAssignment(
-        payload: CreateAssignmentPayload
+        payload: AssignmentModifiable
     ): Promise<AssignmentData> {
         const res = await fetch('http://localhost:3000/assignments', {
             method: 'POST',
@@ -95,6 +96,7 @@ export function AssignmentPage() {
             const newAssignment = await createAssignment({
                 title: name,
                 description: desc,
+                completion_status: 'To Do',
                 due_date: null,
             })
 
