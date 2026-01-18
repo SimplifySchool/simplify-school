@@ -111,7 +111,16 @@ export function AssignmentPage() {
         showEditDialog()
     }
 
-    function removeAssignment(id: number) {
+    async function removeAssignment(id: number) {
+        const res = await fetch(`http://localhost:3000/assignments/${id}`, {
+            method: 'DELETE',
+        })
+
+        if (!res.ok) {
+            const text = await res.text()
+            throw new Error(text || 'Failed to delete assignment')
+        }
+
         setAssignments((prev) => prev.filter((a) => a.id !== id))
     }
 
@@ -144,7 +153,8 @@ export function AssignmentPage() {
                                 initialName={a.title}
                                 desc={a.description}
                                 key={a.id}
-                                onDelete={() => removeAssignment(a.id)}
+                                onDelete={() => void removeAssignment(a.id)}
+                                id={a.id}
                             />
                         ))}
 

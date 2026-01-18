@@ -6,10 +6,12 @@ import { DialogHeader } from '../../components/DialogBox/DialogHeader'
 import { DialogContent } from '../../components/DialogBox/DialogContent'
 import { TextField } from '../../components/TextField'
 import { DialogFooter } from '../../components/DialogBox/DialogFooter'
+import type { AssignmentData, AssignmentModifiable } from './AssignmentPage'
 
 type AssignmentStatus = 'To Do' | 'Doing' | 'Done'
 
 interface AssignmentProps {
+    id: number
     initialName?: string
     desc?: string
     dueDate?: string
@@ -17,6 +19,7 @@ interface AssignmentProps {
 }
 
 function Assignment({
+    id,
     initialName = 'New Assignment',
     desc = 'There is no description provided.',
     dueDate = 'No date set',
@@ -31,7 +34,23 @@ function Assignment({
     const [textError, setTextError] = useState('')
     const [descError, setDescError] = useState('')
 
-    function saveAndExit(name: string, desc: string) {
+    async function modifyAssignment(payload: AssignmentModifiable) {
+        const res = await fetch(`http://localhost:3000/assignments/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        })
+
+        if (!res.ok) {
+            const text = await res.text()
+            throw new Error(text || 'Failed to update assignment')
+        }
+
+        const data = (await res.json()) as AssignmentData
+        return data
+    }
+
+    async function saveAndExit(name: string, desc: string) {
         //Input validation!
         if (name.trim().length === 0) {
             setTextError('Invalid Assignment Name')
@@ -43,10 +62,24 @@ function Assignment({
             return
         }
 
-        changeAssignmentName(name)
-        changeAssignmentDesc(desc)
-        hideEditDialog()
-        setTextError('')
+        const payload: AssignmentModifiable = {
+            title: name,
+            description: desc,
+            completion_status: status,
+            due_date: null,
+        }
+
+        try {
+            const newAssignment = await modifyAssignment(payload)
+            changeAssignmentName(newAssignment.title)
+            changeAssignmentDesc(newAssignment.description)
+            setStatus(newAssignment.completion_status)
+
+            setTextError('')
+            setDescError('')
+        } catch (err) {
+            console.error(err)
+        }
     }
 
     function changeDraftDesc(desc: string) {
@@ -167,7 +200,9 @@ function Assignment({
                                 }
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
-                                        saveAndExit(draftName, draftDesc)
+                                        saveAndExit(draftName, draftDesc).catch(
+                                            console.error
+                                        )
                                     }
                                 }}
                                 error={textError}
@@ -182,7 +217,9 @@ function Assignment({
                                 placeholder="Desc"
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
-                                        saveAndExit(draftName, draftDesc)
+                                        saveAndExit(draftName, draftDesc).catch(
+                                            console.error
+                                        )
                                     }
                                 }}
                                 onChange={(e) =>
@@ -198,7 +235,7 @@ function Assignment({
                     <Button
                         variant="outlined"
                         className="absolute bottom-5 right-5 font-bold! text-black! "
-                        onClick={() => saveAndExit(draftName, draftDesc)}
+                        onClick={() => void saveAndExit(draftName, draftDesc)}
                     >
                         Save & Exit
                     </Button>
