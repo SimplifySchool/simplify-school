@@ -49,6 +49,7 @@ func main() {
 	app.Get("/assignments", handler.GetAssignments)
 	app.Post("/assignments", handler.CreateAssignment)
 	app.Delete("/assignments/:id", handler.DeleteAssignment)
+	app.Put("/assignments/:id", handler.PutAssignment)
 
 	app.Listen(":3000")
 }

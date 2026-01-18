@@ -133,9 +133,9 @@ func (r *Repository) PutAssignment(ctx context.Context, a Assignment) (Assignmen
 		title = $2,
 		description = $3,
 		completion_status = $4,
-		due_date = $5,
+		due_date = $5
 	WHERE id = $1 AND user_id = $6
-	RETURNING title, description, completion_status, due_date;
+	RETURNING title, description, completion_status, due_date, created_at;
 	`
 	rA := Assignment{ // returnedAssignment
 		ID:     a.ID,
@@ -148,13 +148,18 @@ func (r *Repository) PutAssignment(ctx context.Context, a Assignment) (Assignmen
 		a.Description,
 		a.CompletionStatus,
 		a.DueDate,
-		a.CreatedAt,
 		a.UserID,
-	).Scan(&rA.Title, &rA.Description, &rA.CompletionStatus, &rA.DueDate, &rA.CreatedAt)
+	).Scan(
+		&rA.Title,
+		&rA.Description,
+		&rA.CompletionStatus,
+		&rA.DueDate,
+		&rA.CreatedAt,
+	)
 
 	if err != nil {
 		if err == pgx.ErrNoRows {
-			return Assignment{}, errors.New("Assignment not found")
+			return Assignment{}, ErrAssignmentNotFound
 		}
 		return Assignment{}, err
 	}

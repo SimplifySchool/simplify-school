@@ -58,8 +58,17 @@ func (s *Service) DeleteAssignment(ctx context.Context, ID int, userID int) erro
 	return s.repo.DeleteAssignment(ctx, ID, userID)
 }
 
-func (s *Service) UpdateAssignment(ctx context.Context, a Assignment) (AssignmentResponse, error) {
-	newAssignment, err := s.repo.PutAssignment(ctx, a)
+func (s *Service) UpdateAssignment(ctx context.Context, a AssignmentModifiable, id int, userID int) (AssignmentResponse, error) {
+	var assignment Assignment
+
+	assignment.ID = id
+	assignment.UserID = userID
+	assignment.Title = a.Title
+	assignment.Description = a.Description
+	assignment.CompletionStatus = a.CompletionStatus
+	assignment.DueDate = a.DueDate
+	
+	newAssignment, err := s.repo.PutAssignment(ctx, assignment)
 
 	if err != nil {
 		return AssignmentResponse{}, err

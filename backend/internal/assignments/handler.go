@@ -1,6 +1,7 @@
 package assignments
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 
@@ -28,7 +29,7 @@ func (h *Handler) CreateAssignment(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadGateway, "Title is required")
 	}
 
-	if strings.TrimSpace(req.Title) == "" { // Frontend already checks for this but we still check
+	if strings.TrimSpace(req.Description) == "" { // Frontend already checks for this but we still check
 		return fiber.NewError(fiber.StatusBadGateway, "Description is required")
 	}
 
@@ -69,10 +70,10 @@ func (h *Handler) DeleteAssignment(c *fiber.Ctx) error {
 }
 
 func (h *Handler) PutAssignment(c *fiber.Ctx) error {
-	var assignment Assignment
+	var assignment AssignmentModifiable
 
-	idParamater := c.Params("id")
-	assignmentID, idErr := strconv.Atoi(idParamater)
+	idParameter := c.Params("id")
+	assignmentID, idErr := strconv.Atoi(idParameter)
 	if idErr != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid Assignment ID")
 	}
@@ -82,20 +83,17 @@ func (h *Handler) PutAssignment(c *fiber.Ctx) error {
 	}
 
 	if strings.TrimSpace(assignment.Title) == "" {
-		return fiber.NewError(fiber.StatusBadGateway, "Title is required")
+		return fiber.NewError(fiber.StatusBadRequest, "Title is required")
 	}
 
 	if strings.TrimSpace(assignment.Description) == "" {
-		return fiber.NewError(fiber.StatusBadGateway, "Description is required")
+		return fiber.NewError(fiber.StatusBadRequest, "Description is required")
 	}
 
-	assignment.ID = assignmentID
-	assignment.UserID = mockUserID
-
-	response, err2 := h.service.UpdateAssignment(c.Context(), assignment)
+	response, err2 := h.service.UpdateAssignment(c.Context(), assignment, assignmentID, mockUserID)
 
 	if err2 != nil {
-		if err2.Error() == "Assignment not found" {
+		if errors.Is(err2, ErrAssignmentNotFound) {
 			return fiber.NewError(fiber.StatusNotFound, err2.Error())
 		}
 		return fiber.NewError(fiber.StatusInternalServerError, err2.Error())

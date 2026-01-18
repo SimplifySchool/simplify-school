@@ -1,8 +1,11 @@
 package assignments
 
 import (
+	"errors"
 	"time"
 )
+
+var ErrAssignmentNotFound = errors.New("assignment not found")
 
 type CompletionStatus string
 
@@ -82,4 +85,15 @@ type AssignmentInput struct {
 	Title       string     `json:"title"`
 	Description string     `json:"description"`
 	DueDate     *time.Time `json:"due_date"`
+}
+
+/*
+Struct that represents all the fields a user can modify once having created the assginment (Frontend's input for a PUT request)
+  - ID, UserID and CreatedAt fields have been omitted for it should not be something the user decides, but the backend
+*/
+type AssignmentModifiable struct {
+	Title            string           `json:"title"`
+	Description      string           `json:"description"`
+	CompletionStatus CompletionStatus `json:"completion_status"`
+	DueDate          *time.Time       `json:"due_date"`
 }
