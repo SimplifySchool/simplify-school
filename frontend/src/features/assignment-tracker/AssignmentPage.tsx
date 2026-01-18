@@ -197,7 +197,10 @@ export function AssignmentPage() {
                                     error={assignmentNameError}
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
-                                            saveAndExit(draftName, draftDesc)
+                                            saveAndExit(
+                                                draftName,
+                                                draftDesc
+                                            ).catch(console.error)
                                         }
                                     }}
                                 ></TextField>
@@ -215,7 +218,10 @@ export function AssignmentPage() {
                                     error={assignmentDescError}
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
-                                            saveAndExit(draftName, draftDesc)
+                                            saveAndExit(
+                                                draftName,
+                                                draftDesc
+                                            ).catch(console.error)
                                         }
                                     }}
                                 ></TextField>
@@ -227,7 +233,9 @@ export function AssignmentPage() {
                         <Button
                             variant="outlined"
                             className="absolute bottom-5 right-5 font-bold! text-black! "
-                            onClick={() => saveAndExit(draftName, draftDesc)}
+                            onClick={() =>
+                                void saveAndExit(draftName, draftDesc)
+                            }
                         >
                             Save & Exit
                         </Button>
