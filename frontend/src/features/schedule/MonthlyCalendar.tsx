@@ -1,15 +1,16 @@
-import { DayBox } from './DaysOfTheWeek/DayBox'
-import { DayNames } from './DaysOfTheWeek/DayNames'
-import React from 'react'
 import {
-    addMonths,
-    subMonths,
     addDays,
-    startOfMonth,
+    addMonths,
+    format,
     getDay,
     getDaysInMonth,
-    format,
+    startOfMonth,
+    subMonths,
 } from 'date-fns'
+import { useState } from 'react'
+import { Dialog } from '../../components/Dialog'
+import { DayBox } from './DaysOfTheWeek/DayBox'
+import { DayNames } from './DaysOfTheWeek/DayNames'
 
 type MonthOffset = -1 | 0 | 1
 
@@ -20,7 +21,9 @@ interface CalendarCell {
 }
 
 export function MonthlyCalendar() {
-    const today = new Date()
+    const [visible, setVisible] = useState(false)
+
+    const today: Date = new Date()
     const firstDay = startOfMonth(today)
 
     const monthName = format(firstDay, 'LLLL yyyy')
@@ -70,9 +73,17 @@ export function MonthlyCalendar() {
 
     if (cells.length > totalCells) cells.length = totalCells
 
+    function hideDayDialog() {
+        setVisible(false)
+    }
+
+    function showDayDialog() {
+        setVisible(true)
+    }
+
     return (
         <>
-            <div className="border w-[1206px]">
+            <div className="border w-auto">
                 <div className="Calendar">
                     <div className="MonthName">
                         <h1 className="pl-2 pt-2 pb-2 text-6xl font-bold text-center border">
@@ -80,7 +91,7 @@ export function MonthlyCalendar() {
                         </h1>
                     </div>
 
-                    <div className="w-[1204px]">
+                    <div className="w-auto">
                         <div className="grid grid-cols-7">
                             {dayNames.map((name) => (
                                 <DayNames key={name} dayName={name} />
@@ -99,6 +110,12 @@ export function MonthlyCalendar() {
                     </div>
                 </div>
             </div>
+
+            <Dialog open={visible} onClose={hideDayDialog}>
+                <DialogHeader title={<span>{format(today, 'MMMM do')}</span>}>
+                    <button onClick={hideDayDialog}>Close</button>
+                </DialogHeader>
+            </Dialog>
         </>
     )
 }

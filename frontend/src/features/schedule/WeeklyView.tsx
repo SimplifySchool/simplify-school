@@ -1,7 +1,6 @@
-import React from 'react'
-import { DayNames } from './DaysOfTheWeek/DayNames'
-import { DayBox } from './DaysOfTheWeek/DayBox'
 import { addDays, format, startOfWeek } from 'date-fns'
+import { DayBox } from './DaysOfTheWeek/DayBox'
+import { DayNames } from './DaysOfTheWeek/DayNames'
 
 export function WeeklyView() {
     const dayNames = [
@@ -34,7 +33,7 @@ export function WeeklyView() {
     }
 
     return (
-        <div className="border w-[1206px]">
+        <div className="border w-auto">
             <h1 className="pl-2 pt-2 pb-2 text-6xl font-bold text-center border">
                 Week Of {format(start, 'MMMM do')}
             </h1>
