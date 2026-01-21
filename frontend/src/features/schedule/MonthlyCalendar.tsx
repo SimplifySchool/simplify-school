@@ -8,7 +8,11 @@ import {
     subMonths,
 } from 'date-fns'
 import { useState } from 'react'
-import { Dialog } from '../../components/Dialog'
+import Button from '../../components/Button'
+import { Dialog } from '../../components/DialogBox/Dialog'
+import { DialogContent } from '../../components/DialogBox/DialogContent'
+import { DialogFooter } from '../../components/DialogBox/DialogFooter'
+import { DialogHeader } from '../../components/DialogBox/DialogHeader'
 import { DayBox } from './DaysOfTheWeek/DayBox'
 import { DayNames } from './DaysOfTheWeek/DayNames'
 
@@ -21,6 +25,8 @@ interface CalendarCell {
 }
 
 export function MonthlyCalendar() {
+    const [clickedDay, setClickedDay] = useState<Date | null>(null)
+
     const [visible, setVisible] = useState(false)
 
     const today: Date = new Date()
@@ -77,44 +83,58 @@ export function MonthlyCalendar() {
         setVisible(false)
     }
 
-    function showDayDialog() {
+    function showDayDialog(date: Date) {
+        setClickedDay(date)
         setVisible(true)
     }
 
     return (
         <>
             <div className="border w-auto">
-                <div className="Calendar">
-                    <div className="MonthName">
-                        <h1 className="pl-2 pt-2 pb-2 text-6xl font-bold text-center border">
-                            {monthName}
-                        </h1>
-                    </div>
+                <h1 className="pl-2 pt-2 pb-2 text-6xl font-bold text-center border">
+                    {monthName}
+                </h1>
 
-                    <div className="w-auto">
-                        <div className="grid grid-cols-7">
-                            {dayNames.map((name) => (
-                                <DayNames key={name} dayName={name} />
-                            ))}
-                        </div>
-                        <div className="grid grid-cols-7">
-                            {cells.map((cell, idx) => (
-                                <DayBox
-                                    key={`${cell.monthOffset}-${cell.day}-${idx}`}
-                                    num={cell.day}
-                                    isCurrentMonth={cell.monthOffset === 0}
-                                    date={cell.date}
-                                />
-                            ))}
-                        </div>
+                <div className="w-auto">
+                    <div className="grid grid-cols-7">
+                        {dayNames.map((name) => (
+                            <DayNames key={name} dayName={name} />
+                        ))}
+                    </div>
+                    <div className="grid grid-cols-7">
+                        {cells.map((cell, idx) => (
+                            <DayBox
+                                onClick={() => showDayDialog(cell.date)}
+                                key={`${cell.monthOffset}-${cell.day}-${idx}`}
+                                num={cell.day}
+                                isCurrentMonth={cell.monthOffset === 0}
+                                date={cell.date}
+                            />
+                        ))}
                     </div>
                 </div>
             </div>
 
             <Dialog open={visible} onClose={hideDayDialog}>
-                <DialogHeader title={<span>{format(today, 'MMMM do')}</span>}>
-                    <button onClick={hideDayDialog}>Close</button>
-                </DialogHeader>
+                <DialogHeader
+                    extraClassNames="border-b-3"
+                    title={
+                        <span className="text-4xl">
+                            {clickedDay
+                                ? format(clickedDay, 'MMMM do yyyy')
+                                : ''}
+                        </span>
+                    }
+                ></DialogHeader>
+                <DialogContent>Assignment</DialogContent>
+                <DialogFooter>
+                    <Button
+                        className="absolute bottom-5 right-5 font-bold! text-white!"
+                        onClick={hideDayDialog}
+                    >
+                        Close
+                    </Button>
+                </DialogFooter>
             </Dialog>
         </>
     )
