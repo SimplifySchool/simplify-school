@@ -24,8 +24,8 @@ export interface AssignmentModifiable {
 }
 
 export function AssignmentPage() {
-    const initialAssignmentName = 'My Assignment'
-    const initialAssignmentDesc = 'No description has been given yet'
+    const initialAssignmentName = ''
+    const initialAssignmentDesc = ''
 
     const [initDialogBoxStatus, setInitDialogBoxStatus] = useState(false)
     const [draftName, setDraftName] = useState(initialAssignmentName)
@@ -99,8 +99,11 @@ export function AssignmentPage() {
                 completion_status: 'To Do',
                 due_date: null,
             })
-
-            setAssignments((prev) => [...prev, newAssignment])
+            if (assignments === null) {
+                setAssignments([newAssignment])
+            } else {
+                setAssignments((prev) => [...prev, newAssignment])
+            }
             hideEditDialog()
         } catch (err) {
             console.error(err)
@@ -148,7 +151,7 @@ export function AssignmentPage() {
                         Your Assignments:
                     </h2>
                     <div className="flex flex-col gap-5">
-                        {assignments.map((a) => (
+                        {assignments?.map((a) => (
                             <Assignment
                                 initialName={a.title}
                                 desc={a.description}

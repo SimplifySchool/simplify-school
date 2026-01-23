@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Dropdown from '../../components/Dropdown'
 import Button from '../../components/Button'
 import { Dialog } from '../../components/DialogBox/Dialog'
@@ -12,21 +12,21 @@ type AssignmentStatus = 'To Do' | 'Doing' | 'Done'
 
 interface AssignmentProps {
     id: number
-    initialName?: string
-    desc?: string
+    initialName: string
+    desc: string
     dueDate?: string
     onDelete: () => void
 }
 
 function Assignment({
     id,
-    initialName = 'New Assignment',
-    desc = 'There is no description provided.',
+    initialName = '',
+    desc = '',
     dueDate = 'No date set',
     onDelete,
 }: AssignmentProps) {
     const [status, setStatus] = useState<AssignmentStatus>('To Do')
-    const [visible, setVisible] = useState(false)
+    const [visible, setVisible] = useState(false) // For the dialog box
     const [draftName, setDraftName] = useState(initialName)
     const [draftDesc, setDraftDesc] = useState(desc)
     const [assignmentName, setAssignmentName] = useState(initialName)
@@ -75,8 +75,12 @@ function Assignment({
             changeAssignmentDesc(newAssignment.description)
             setStatus(newAssignment.completion_status)
 
+            changeDraftName('')
+            changeDraftDesc('')
             setTextError('')
             setDescError('')
+
+            setVisible(false)
         } catch (err) {
             console.error(err)
         }
@@ -105,6 +109,8 @@ function Assignment({
     function hideEditDialog() {
         setVisible(false)
     }
+
+    // useEffect(() => {}, [status]) //TODO:
 
     return (
         <>
