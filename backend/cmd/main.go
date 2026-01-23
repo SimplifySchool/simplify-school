@@ -47,6 +47,7 @@ func main() {
 	handler := assignments.NewHandler(service)
 
 	app.Get("/assignments", handler.GetAssignments)
+	app.Get("/schedule", handler.GetAssignments)
 	app.Post("/assignments", handler.CreateAssignment)
 	app.Delete("/assignments/:id", handler.DeleteAssignment)
 	app.Put("/assignments/:id", handler.PutAssignment)
