@@ -27,7 +27,6 @@ interface CalendarCell {
 
 export function MonthlyCalendar() {
     const { assignments } = useAssignments()
-    // const [assignments, setAssignments] = useState<AssignmentData[]>([])
     const [clickedDay, setClickedDay] = useState<Date | null>(null)
 
     const [visible, setVisible] = useState(false)

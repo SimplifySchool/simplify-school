@@ -92,8 +92,6 @@ func (r *Repository) InsertAssignment(ctx context.Context, a Assignment) (int, e
 		a.UserID,
 	).Scan(&a.ID)
 
-	
-
 	if err != nil {
 		return 0, err
 	}

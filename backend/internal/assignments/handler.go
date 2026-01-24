@@ -90,12 +90,9 @@ func (h *Handler) PutAssignment(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "Description is required")
 	}
 
-	// Validate completion status to ensure it is one of the allowed values
-	switch strings.TrimSpace(assignment.CompletionStatus) {
-	case "To Do", "Doing", "Done":
-		// valid status, continue
-	default:
-		return fiber.NewError(fiber.StatusBadRequest, "Invalid completion status")
+	// Validate completion status using shared helper to ensure it is one of the allowed values
+	if err := CompletionStatusValidation(strings.TrimSpace(assignment.CompletionStatus)); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 	response, err2 := h.service.UpdateAssignment(c.Context(), assignment, assignmentID, mockUserID)
 

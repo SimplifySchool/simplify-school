@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Button from '../../components/Button'
 import { Dialog } from '../../components/DialogBox/Dialog'
 import { DialogContent } from '../../components/DialogBox/DialogContent'
@@ -119,10 +119,10 @@ export function AssignmentPage() {
             method: 'DELETE',
         })
 
-            if (!res.ok) {
-                const text = await res.text()
-                throw new Error(text || 'Failed to delete assignment')
-            }
+        if (!res.ok) {
+            const text = await res.text()
+            throw new Error(text || 'Failed to delete assignment')
+        }
 
         deleteAssignment(id)
     }
