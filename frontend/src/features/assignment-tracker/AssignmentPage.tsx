@@ -6,6 +6,9 @@ import { DialogFooter } from '../../components/DialogBox/DialogFooter'
 import { DialogHeader } from '../../components/DialogBox/DialogHeader'
 import { TextField } from '../../components/TextField'
 import Assignment from './Assignment'
+import { useAssignments } from '../../hooks/useAssignments'
+
+const apiURL = import.meta.env.VITE_API_URL as string
 
 export interface AssignmentData {
     id: number
@@ -32,7 +35,8 @@ export function AssignmentPage() {
     const [draftDesc, setDraftDesc] = useState(initialAssignmentDesc)
     const [assignmentNameError, setAssignmentNameError] = useState('')
     const [assignmentDescError, setAssignmentDescError] = useState('')
-    const [assignments, setAssignments] = useState<AssignmentData[]>([])
+    const { assignments, updateAssignments, deleteAssignment } =
+        useAssignments()
 
     function hideEditDialog() {
         setInitDialogBoxStatus(false)
@@ -53,7 +57,7 @@ export function AssignmentPage() {
     async function createAssignment(
         payload: AssignmentModifiable
     ): Promise<AssignmentData> {
-        const res = await fetch('http://localhost:3000/assignments', {
+        const res = await fetch(`${apiURL}/assignments`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -99,7 +103,7 @@ export function AssignmentPage() {
                 completion_status: 'To Do',
                 due_date: null,
             })
-            setAssignments((prev) => [...prev, newAssignment])
+            updateAssignments(newAssignment)
             hideEditDialog()
         } catch (err) {
             console.error(err)
@@ -111,37 +115,17 @@ export function AssignmentPage() {
     }
 
     async function removeAssignment(id: number) {
-        try {
-            const res = await fetch(`http://localhost:3000/assignments/${id}`, {
-                method: 'DELETE',
-            })
+        const res = await fetch(`${apiURL}/assignments/${id}`, {
+            method: 'DELETE',
+        })
 
             if (!res.ok) {
                 const text = await res.text()
                 throw new Error(text || 'Failed to delete assignment')
             }
 
-            setAssignments((prev) => prev.filter((a) => a.id !== id))
-        } catch (error) {
-            console.error(error)
-        }
+        deleteAssignment(id)
     }
-
-    useEffect(() => {
-        const loadAssignments = async () => {
-            try {
-                const res = await fetch('http://localhost:3000/assignments')
-                if (!res.ok) throw new Error('Failed to fetch')
-
-                const data = (await res.json()) as AssignmentData[]
-                setAssignments(data)
-            } catch (error) {
-                console.log(error)
-            }
-        }
-
-        loadAssignments().catch((err) => console.error(err))
-    }, [])
 
     return (
         <>

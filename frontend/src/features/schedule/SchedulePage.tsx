@@ -1,18 +1,30 @@
-import React from 'react'
 import { useState } from 'react'
 import { MonthlyCalendar } from './MonthlyCalendar'
 import { WeeklyView } from './WeeklyView'
 import Button from '../../components/Button'
 
+type onePage = 'weekly' | 'monthly'
+
 export function SchedulePage() {
-    const [page, setPage] = useState(<WeeklyView />)
+    const DEFAULT_PAGE = 'weekly'
+
+    const [page, setPage] = useState(DEFAULT_PAGE as onePage)
 
     function putMonthlyCalendar() {
-        setPage(<MonthlyCalendar />)
+        setPage('monthly' as onePage)
     }
 
     function putWeeklyView() {
-        setPage(<WeeklyView />)
+        setPage('weekly' as onePage)
+    }
+
+    function renderPage() {
+        switch (page) {
+            case 'weekly':
+                return <WeeklyView />
+            case 'monthly':
+                return <MonthlyCalendar />
+        }
     }
 
     return (
@@ -33,7 +45,7 @@ export function SchedulePage() {
                     Monthly View
                 </Button>
             </div>
-            {page}
+            {renderPage()}
         </div>
     )
 }

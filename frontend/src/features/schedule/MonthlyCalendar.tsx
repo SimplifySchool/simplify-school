@@ -7,15 +7,15 @@ import {
     startOfMonth,
     subMonths,
 } from 'date-fns'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Button from '../../components/Button'
 import { Dialog } from '../../components/DialogBox/Dialog'
 import { DialogContent } from '../../components/DialogBox/DialogContent'
 import { DialogFooter } from '../../components/DialogBox/DialogFooter'
 import { DialogHeader } from '../../components/DialogBox/DialogHeader'
-import type { AssignmentData } from '../assignment-tracker/AssignmentPage'
 import { DayBox } from './DaysOfTheWeek/DayBox'
 import { DayNames } from './DaysOfTheWeek/DayNames'
+import { useAssignments } from '../../hooks/useAssignments'
 
 type MonthOffset = -1 | 0 | 1
 
@@ -26,7 +26,8 @@ interface CalendarCell {
 }
 
 export function MonthlyCalendar() {
-    const [assignments, setAssignments] = useState<AssignmentData[]>([])
+    const { assignments } = useAssignments()
+    // const [assignments, setAssignments] = useState<AssignmentData[]>([])
     const [clickedDay, setClickedDay] = useState<Date | null>(null)
 
     const [visible, setVisible] = useState(false)
@@ -95,22 +96,6 @@ export function MonthlyCalendar() {
         setClickedDay(date)
         setVisible(true)
     }
-
-    useEffect(() => {
-        const loadAssignments = async () => {
-            try {
-                const res = await fetch('http://localhost:3000/assignments')
-                if (!res.ok) throw new Error('Failed to fetch')
-
-                const data = (await res.json()) as AssignmentData[]
-                setAssignments(data)
-            } catch (error) {
-                console.log(error)
-            }
-        }
-
-        loadAssignments().catch((err) => console.error(err))
-    }, [])
 
     return (
         <>
