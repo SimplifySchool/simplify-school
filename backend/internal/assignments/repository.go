@@ -25,7 +25,7 @@ func NewRepository(db *pgxpool.Pool) *Repository {
 /*
 Gets all the assignments that a user has created
 
-	@param ctx (context.Context) the conext
+	@param ctx (context.Context) the context
 	@param userID (int) The ID of the user
 	@return ([]Assignment, error) Returns an array of assignment data that will be displayed on the frontend, nil if an error is not nil
 */

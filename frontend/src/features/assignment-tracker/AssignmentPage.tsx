@@ -70,7 +70,7 @@ export function AssignmentPage() {
     }
 
     /**
-     * Creates the assignment with the given name and decription
+     * Creates the assignment with the given name and description
      * @param name The name of the assignment
      * @returns
      */
@@ -99,11 +99,7 @@ export function AssignmentPage() {
                 completion_status: 'To Do',
                 due_date: null,
             })
-            if (assignments === null) {
-                setAssignments([newAssignment])
-            } else {
-                setAssignments((prev) => [...prev, newAssignment])
-            }
+            setAssignments((prev) => [...prev, newAssignment])
             hideEditDialog()
         } catch (err) {
             console.error(err)
@@ -115,16 +111,20 @@ export function AssignmentPage() {
     }
 
     async function removeAssignment(id: number) {
-        const res = await fetch(`http://localhost:3000/assignments/${id}`, {
-            method: 'DELETE',
-        })
+        try {
+            const res = await fetch(`http://localhost:3000/assignments/${id}`, {
+                method: 'DELETE',
+            })
 
-        if (!res.ok) {
-            const text = await res.text()
-            throw new Error(text || 'Failed to delete assignment')
+            if (!res.ok) {
+                const text = await res.text()
+                throw new Error(text || 'Failed to delete assignment')
+            }
+
+            setAssignments((prev) => prev.filter((a) => a.id !== id))
+        } catch (error) {
+            console.error(error)
         }
-
-        setAssignments((prev) => prev.filter((a) => a.id !== id))
     }
 
     useEffect(() => {

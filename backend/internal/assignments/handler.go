@@ -26,11 +26,11 @@ func (h *Handler) CreateAssignment(c *fiber.Ctx) error {
 	}
 
 	if strings.TrimSpace(req.Title) == "" { // Frontend already checks for this but we still check
-		return fiber.NewError(fiber.StatusBadGateway, "Title is required")
+		return fiber.NewError(fiber.StatusBadRequest, "Title is required")
 	}
 
 	if strings.TrimSpace(req.Description) == "" { // Frontend already checks for this but we still check
-		return fiber.NewError(fiber.StatusBadGateway, "Description is required")
+		return fiber.NewError(fiber.StatusBadRequest, "Description is required")
 	}
 
 	res, err := h.service.CreateAssignment(c.Context(), req, mockUserID)
@@ -60,7 +60,7 @@ func (h *Handler) DeleteAssignment(c *fiber.Ctx) error {
 
 	deleteAssignmentError := h.service.DeleteAssignment(c.Context(), assignmentID, mockUserID)
 	if deleteAssignmentError != nil {
-		if deleteAssignmentError.Error() == "Assignment not found" {
+		if errors.Is(deleteAssignmentError, ErrAssignmentNotFound) {
 			return fiber.NewError(fiber.StatusNotFound, deleteAssignmentError.Error())
 		}
 		return fiber.NewError(fiber.StatusInternalServerError, deleteAssignmentError.Error())
@@ -90,6 +90,13 @@ func (h *Handler) PutAssignment(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "Description is required")
 	}
 
+	// Validate completion status to ensure it is one of the allowed values
+	switch strings.TrimSpace(assignment.CompletionStatus) {
+	case "To Do", "Doing", "Done":
+		// valid status, continue
+	default:
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid completion status")
+	}
 	response, err2 := h.service.UpdateAssignment(c.Context(), assignment, assignmentID, mockUserID)
 
 	if err2 != nil {
