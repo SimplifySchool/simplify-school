@@ -6,6 +6,7 @@ import { DialogFooter } from '../../components/DialogBox/DialogFooter'
 import { DialogHeader } from '../../components/DialogBox/DialogHeader'
 import { TextField } from '../../components/TextField'
 import Assignment from './Assignment'
+import { useAssignments } from '../../hooks/useAssignments'
 
 const apiURL = import.meta.env.VITE_API_URL as string
 
@@ -34,7 +35,8 @@ export function AssignmentPage() {
     const [draftDesc, setDraftDesc] = useState(initialAssignmentDesc)
     const [assignmentNameError, setAssignmentNameError] = useState('')
     const [assignmentDescError, setAssignmentDescError] = useState('')
-    const [assignments, setAssignments] = useState<AssignmentData[]>([])
+    const { assignments, updateAssignments, deleteAssignment } =
+        useAssignments()
 
     function hideEditDialog() {
         setInitDialogBoxStatus(false)
@@ -101,11 +103,7 @@ export function AssignmentPage() {
                 completion_status: 'To Do',
                 due_date: null,
             })
-            if (assignments === null) {
-                setAssignments([newAssignment])
-            } else {
-                setAssignments((prev) => [...prev, newAssignment])
-            }
+            updateAssignments(newAssignment)
             hideEditDialog()
         } catch (err) {
             console.error(err)
@@ -126,24 +124,8 @@ export function AssignmentPage() {
             throw new Error(text || 'Failed to delete assignment')
         }
 
-        setAssignments((prev) => prev.filter((a) => a.id !== id))
+        deleteAssignment(id)
     }
-
-    useEffect(() => {
-        const loadAssignments = async () => {
-            try {
-                const res = await fetch(`${apiURL}/assignments`)
-                if (!res.ok) throw new Error('Failed to fetch')
-
-                const data = (await res.json()) as AssignmentData[]
-                setAssignments(data)
-            } catch (error) {
-                console.log(error)
-            }
-        }
-
-        loadAssignments().catch((err) => console.error(err))
-    }, [])
 
     return (
         <>

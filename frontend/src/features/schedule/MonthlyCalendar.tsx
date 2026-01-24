@@ -16,6 +16,7 @@ import { DialogHeader } from '../../components/DialogBox/DialogHeader'
 import type { AssignmentData } from '../assignment-tracker/AssignmentPage'
 import { DayBox } from './DaysOfTheWeek/DayBox'
 import { DayNames } from './DaysOfTheWeek/DayNames'
+import { useAssignments } from '../../hooks/useAssignments'
 
 type MonthOffset = -1 | 0 | 1
 
@@ -28,7 +29,8 @@ interface CalendarCell {
 }
 
 export function MonthlyCalendar() {
-    const [assignments, setAssignments] = useState<AssignmentData[]>([])
+    const { assignments, replaceAssignmets } = useAssignments()
+    // const [assignments, setAssignments] = useState<AssignmentData[]>([])
     const [clickedDay, setClickedDay] = useState<Date | null>(null)
 
     const [visible, setVisible] = useState(false)
@@ -99,13 +101,15 @@ export function MonthlyCalendar() {
     }
 
     useEffect(() => {
+        // Delete the useEffect cuz already calling useAssignments does the same thing
+        // (check if its the same code as the other file or not (do the same thing with WeeklyView.tsx ))
         const loadAssignments = async () => {
             try {
                 const res = await fetch(`${apiURL}/assignments`)
                 if (!res.ok) throw new Error('Failed to fetch')
 
                 const data = (await res.json()) as AssignmentData[]
-                setAssignments(data)
+                replaceAssignmets(data) // Custom hook
             } catch (error) {
                 console.log(error)
             }

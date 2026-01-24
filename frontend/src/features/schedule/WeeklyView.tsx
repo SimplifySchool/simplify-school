@@ -8,12 +8,13 @@ import { DialogHeader } from '../../components/DialogBox/DialogHeader'
 import type { AssignmentData } from '../assignment-tracker/AssignmentPage'
 import { DayBox } from './DaysOfTheWeek/DayBox'
 import { DayNames } from './DaysOfTheWeek/DayNames'
+import { useAssignments } from '../../hooks/useAssignments'
 
 const apiURL = import.meta.env.VITE_API_URL as string
 
 export function WeeklyView() {
     const [clickedDay, setClickedDay] = useState<Date | null>(null)
-    const [assignments, setAssignments] = useState<AssignmentData[]>([])
+    const { assignments, replaceAssignmets } = useAssignments()
 
     const [visible, setVisible] = useState(false)
 
@@ -69,7 +70,7 @@ export function WeeklyView() {
                 if (!res.ok) throw new Error('Failed to fetch')
 
                 const data = (await res.json()) as AssignmentData[]
-                setAssignments(data)
+                replaceAssignmets(data)
             } catch (error) {
                 console.log(error)
             }
