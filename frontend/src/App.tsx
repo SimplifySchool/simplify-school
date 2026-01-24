@@ -1,39 +1,68 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useAuth0 } from '@auth0/auth0-react'
+import { useEffect } from 'react'
 import './App.css'
+import { useApi } from './hooks/useApi'
+import { LandingPage } from './landing-page/LandingPage'
 
 function App() {
-    const [count, setCount] = useState(0)
+    const { isAuthenticated, isLoading, error, user } = useAuth0()
+    const { callApi } = useApi()
 
-    return (
-        <>
-            <div>
-                <a href="https://vite.dev" target="_blank">
-                    <img src={viteLogo} className="logo" alt="Vite logo" />
-                </a>
-                <a href="https://react.dev" target="_blank">
-                    <img
-                        src={reactLogo}
-                        className="logo react"
-                        alt="React logo"
-                    />
-                </a>
+    // Sync user to backend database when authenticated
+    useEffect(() => {
+        const syncUser = async () => {
+            if (isAuthenticated && user) {
+                try {
+                    await callApi('/api/users/sync', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            auth0_id: user.sub,
+                            email: user.email,
+                            name: user.name,
+                        }),
+                    })
+                } catch (error) {
+                    console.error('Failed to sync user:', error)
+                }
+            }
+        }
+
+        syncUser().catch((err) => {
+            console.error('Error in syncUser:', err)
+        })
+    }, [isAuthenticated, user, callApi])
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 via-white to-purple-50">
+                <div className="text-center">
+                    <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+                    <p className="text-lg text-gray-600">Loading...</p>
+                </div>
             </div>
-            <h1>Vite + React</h1>
-            <div className="card">
-                <button onClick={() => setCount((count) => count + 1)}>
-                    count is {count}
-                </button>
-                <p>
-                    Edit <code>src/App.tsx</code> and save to test HMR
-                </p>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-red-50 via-white to-orange-50">
+                <div className="max-w-md bg-white rounded-xl shadow-lg p-8">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                        Authentication Error
+                    </h2>
+                    <p className="text-gray-600 mb-4">{error.message}</p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                        Reload Page
+                    </button>
+                </div>
             </div>
-            <p className="read-the-docs">
-                Click on the Vite and React logos to learn more
-            </p>
-        </>
-    )
+        )
+    }
+
+    return <LandingPage />
 }
 
 export default App
