@@ -6,7 +6,12 @@ export interface DayBoxProps {
     onClick: React.MouseEventHandler<HTMLDivElement>
 }
 
-export function DayBox({ num, isCurrentMonth, date, onClick }: DayBoxProps) {
+export function DayBox({
+    num,
+    isCurrentMonth = true,
+    date,
+    onClick,
+}: DayBoxProps) {
     const isTodayBox = isToday(date)
 
     return (

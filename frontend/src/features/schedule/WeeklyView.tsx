@@ -44,7 +44,6 @@ export function WeeklyView() {
                     onClick={() => showDayDialog(date)}
                     key={i}
                     num={date.getDate()}
-                    isCurrentMonth={true}
                     date={date}
                 />
             )
