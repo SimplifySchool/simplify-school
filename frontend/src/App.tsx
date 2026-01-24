@@ -4,11 +4,19 @@ import Button from './components/Button'
 import { AssignmentPage } from './features/assignment-tracker/AssignmentPage'
 import { SchedulePage } from './features/schedule/SchedulePage'
 
+type onePage = 'homepage' | 'schedule' | 'assignments'
+
 function App() {
-    const [page, setPage] = useState(<AssignmentPage />)
+    const DEFAULT_PAGE = 'homepage' as onePage
+
+    const [page, setPage] = useState(DEFAULT_PAGE)
 
     function sendToHomePage() {
-        setPage(
+        setPage('homepage' as onePage)
+    }
+
+    function getTempHomePage() {
+        return (
             <>
                 <div className="">Welcome to the homepage</div>
             </>
@@ -16,11 +24,22 @@ function App() {
     }
 
     function sendToSchedulePage() {
-        setPage(<SchedulePage />)
+        setPage('schedule' as onePage)
     }
 
     function sendToAssignmentsPage() {
-        setPage(<AssignmentPage />)
+        setPage('assignments' as onePage)
+    }
+
+    function renderPage() {
+        switch (page) {
+            case 'assignments':
+                return <AssignmentPage />
+            case 'homepage':
+                return getTempHomePage()
+            case 'schedule':
+                return <SchedulePage />
+        }
     }
 
     return (
@@ -52,7 +71,7 @@ function App() {
                         Logout
                     </Button>
                 </div>
-                {page}
+                {renderPage()}
             </div>
         </>
     )
