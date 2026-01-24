@@ -74,7 +74,7 @@ export function AssignmentPage() {
     }
 
     /**
-     * Creates the assignment with the given name and decription
+     * Creates the assignment with the given name and description
      * @param name The name of the assignment
      * @returns
      */
@@ -119,10 +119,10 @@ export function AssignmentPage() {
             method: 'DELETE',
         })
 
-        if (!res.ok) {
-            const text = await res.text()
-            throw new Error(text || 'Failed to delete assignment')
-        }
+            if (!res.ok) {
+                const text = await res.text()
+                throw new Error(text || 'Failed to delete assignment')
+            }
 
         deleteAssignment(id)
     }

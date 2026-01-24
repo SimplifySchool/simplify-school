@@ -48,7 +48,7 @@ func CompletionStatusValidation(c CompletionStatus) bool {
 }
 
 /*
-Struct that represnts an assignment, Database model
+Struct that represents an assignment, Database model
   - Data received from Database and mirrors the table
   - NEVER sent to frontend
 */
@@ -88,7 +88,7 @@ type AssignmentInput struct {
 }
 
 /*
-Struct that represents all the fields a user can modify once having created the assginment (Frontend's input for a PUT request)
+Struct that represents all the fields a user can modify once having created the assignment (Frontend's input for a PUT request)
   - ID, UserID and CreatedAt fields have been omitted for it should not be something the user decides, but the backend
 */
 type AssignmentModifiable struct {
