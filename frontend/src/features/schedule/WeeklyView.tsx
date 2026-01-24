@@ -1,20 +1,17 @@
 import { addDays, format, startOfWeek } from 'date-fns'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Button from '../../components/Button'
 import { Dialog } from '../../components/DialogBox/Dialog'
 import { DialogContent } from '../../components/DialogBox/DialogContent'
 import { DialogFooter } from '../../components/DialogBox/DialogFooter'
 import { DialogHeader } from '../../components/DialogBox/DialogHeader'
-import type { AssignmentData } from '../assignment-tracker/AssignmentPage'
 import { DayBox } from './DaysOfTheWeek/DayBox'
 import { DayNames } from './DaysOfTheWeek/DayNames'
 import { useAssignments } from '../../hooks/useAssignments'
 
-const apiURL = import.meta.env.VITE_API_URL as string
-
 export function WeeklyView() {
     const [clickedDay, setClickedDay] = useState<Date | null>(null)
-    const { assignments, replaceAssignmets } = useAssignments()
+    const { assignments } = useAssignments()
 
     const [visible, setVisible] = useState(false)
 
@@ -62,22 +59,6 @@ export function WeeklyView() {
         setClickedDay(date)
         setVisible(true)
     }
-
-    useEffect(() => {
-        const loadAssignments = async () => {
-            try {
-                const res = await fetch(`${apiURL}/assignments`)
-                if (!res.ok) throw new Error('Failed to fetch')
-
-                const data = (await res.json()) as AssignmentData[]
-                replaceAssignmets(data)
-            } catch (error) {
-                console.log(error)
-            }
-        }
-
-        loadAssignments().catch((err) => console.error(err))
-    }, [])
 
     return (
         <>

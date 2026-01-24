@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Dropdown from '../../components/Dropdown'
 import Button from '../../components/Button'
 import { Dialog } from '../../components/DialogBox/Dialog'
@@ -111,8 +111,6 @@ function Assignment({
     function hideEditDialog() {
         setVisible(false)
     }
-
-    // useEffect(() => {}, [status]) //TODO:
 
     return (
         <>

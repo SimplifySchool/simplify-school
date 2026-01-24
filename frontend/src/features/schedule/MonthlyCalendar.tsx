@@ -7,20 +7,17 @@ import {
     startOfMonth,
     subMonths,
 } from 'date-fns'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Button from '../../components/Button'
 import { Dialog } from '../../components/DialogBox/Dialog'
 import { DialogContent } from '../../components/DialogBox/DialogContent'
 import { DialogFooter } from '../../components/DialogBox/DialogFooter'
 import { DialogHeader } from '../../components/DialogBox/DialogHeader'
-import type { AssignmentData } from '../assignment-tracker/AssignmentPage'
 import { DayBox } from './DaysOfTheWeek/DayBox'
 import { DayNames } from './DaysOfTheWeek/DayNames'
 import { useAssignments } from '../../hooks/useAssignments'
 
 type MonthOffset = -1 | 0 | 1
-
-const apiURL = import.meta.env.VITE_API_URL as string
 
 interface CalendarCell {
     day: number
@@ -29,7 +26,7 @@ interface CalendarCell {
 }
 
 export function MonthlyCalendar() {
-    const { assignments, replaceAssignmets } = useAssignments()
+    const { assignments } = useAssignments()
     // const [assignments, setAssignments] = useState<AssignmentData[]>([])
     const [clickedDay, setClickedDay] = useState<Date | null>(null)
 
@@ -99,24 +96,6 @@ export function MonthlyCalendar() {
         setClickedDay(date)
         setVisible(true)
     }
-
-    useEffect(() => {
-        // Delete the useEffect cuz already calling useAssignments does the same thing
-        // (check if its the same code as the other file or not (do the same thing with WeeklyView.tsx ))
-        const loadAssignments = async () => {
-            try {
-                const res = await fetch(`${apiURL}/assignments`)
-                if (!res.ok) throw new Error('Failed to fetch')
-
-                const data = (await res.json()) as AssignmentData[]
-                replaceAssignmets(data) // Custom hook
-            } catch (error) {
-                console.log(error)
-            }
-        }
-
-        loadAssignments().catch((err) => console.error(err))
-    }, [])
 
     return (
         <>
