@@ -1,19 +1,26 @@
 import { useEffect, useState } from 'react'
-import Assignment from './Assignment'
 import Button from '../../components/Button'
 import { Dialog } from '../../components/DialogBox/Dialog'
-import { DialogHeader } from '../../components/DialogBox/DialogHeader'
 import { DialogContent } from '../../components/DialogBox/DialogContent'
-import { TextField } from '../../components/TextField'
 import { DialogFooter } from '../../components/DialogBox/DialogFooter'
+import { DialogHeader } from '../../components/DialogBox/DialogHeader'
+import { TextField } from '../../components/TextField'
+import Assignment from './Assignment'
 
 export interface AssignmentData {
     id: number
     title: string
     description: string
-    completionStatus: 'To Do' | 'Doing' | 'Done'
-    dueDate: string | null
-    createdAt: string
+    completion_status: 'To Do' | 'Doing' | 'Done'
+    due_date: string | null
+    created_at: string
+}
+
+export interface AssignmentModifiable {
+    title: string
+    description: string
+    completion_status: 'To Do' | 'Doing' | 'Done'
+    due_date: string | null
 }
 
 export function AssignmentPage() {
@@ -22,9 +29,7 @@ export function AssignmentPage() {
 
     const [initDialogBoxStatus, setInitDialogBoxStatus] = useState(false)
     const [draftName, setDraftName] = useState(initialAssignmentName)
-    const [finalAssignmentName, setFinalAssignmentName] = useState(draftName)
     const [draftDesc, setDraftDesc] = useState(initialAssignmentDesc)
-    const [finalAssignmentDesc, setFinalAssignmentDesc] = useState(draftDesc)
     const [assignmentNameError, setAssignmentNameError] = useState('')
     const [assignmentDescError, setAssignmentDescError] = useState('')
     const [assignments, setAssignments] = useState<AssignmentData[]>([])
@@ -45,41 +50,77 @@ export function AssignmentPage() {
         setDraftDesc(name.trim())
     }
 
+    async function createAssignment(
+        payload: AssignmentModifiable
+    ): Promise<AssignmentData> {
+        const res = await fetch('http://localhost:3000/assignments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        })
+
+        if (!res.ok) {
+            throw new Error('Failed to create assignment')
+        }
+
+        const data = (await res.json()) as AssignmentData
+        return data
+    }
+
     /**
      * Creates the assignment with the given name and decription
      * @param name The name of the assignment
      * @returns
      */
-    function saveAndExit(name: string, desc: string) {
-        console.log('ran')
+    async function saveAndExit(name: string, desc: string) {
         if (name.trim().length === 0) {
             setAssignmentNameError('Invalid Assignment Name!')
             return
+        } else {
+            setAssignmentNameError('')
         }
 
-        setAssignmentNameError('')
-        setFinalAssignmentName(name)
-        setFinalAssignmentDesc(desc)
-        setAssignments((prev) => [
-            ...prev,
-            {
-                id: Date.now(),
+        if (desc.trim().length === 0) {
+            setAssignmentDescError('Invalid Assignment Description!')
+            return
+        } else {
+            setAssignmentDescError('')
+        }
+
+        setDraftName('')
+        setDraftDesc('')
+
+        try {
+            const newAssignment = await createAssignment({
                 title: name,
                 description: desc,
-                completionStatus: 'To Do',
-                dueDate: null,
-                createdAt: `${Date.now()}`,
-            },
-        ])
+                completion_status: 'To Do',
+                due_date: null,
+            })
 
-        hideEditDialog()
+            setAssignments((prev) => [...prev, newAssignment])
+            hideEditDialog()
+        } catch (err) {
+            console.error(err)
+        }
     }
 
     function addAssignment() {
         showEditDialog()
     }
 
-    function removeAssignment(id: number) {
+    async function removeAssignment(id: number) {
+        const res = await fetch(`http://localhost:3000/assignments/${id}`, {
+            method: 'DELETE',
+        })
+
+        if (!res.ok) {
+            const text = await res.text()
+            throw new Error(text || 'Failed to delete assignment')
+        }
+
         setAssignments((prev) => prev.filter((a) => a.id !== id))
     }
 
@@ -112,7 +153,8 @@ export function AssignmentPage() {
                                 initialName={a.title}
                                 desc={a.description}
                                 key={a.id}
-                                onDelete={() => removeAssignment(a.id)}
+                                onDelete={() => void removeAssignment(a.id)}
+                                id={a.id}
                             />
                         ))}
 
@@ -167,7 +209,10 @@ export function AssignmentPage() {
                                     error={assignmentNameError}
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
-                                            saveAndExit(draftName, draftDesc)
+                                            saveAndExit(
+                                                draftName,
+                                                draftDesc
+                                            ).catch(console.error)
                                         }
                                     }}
                                 ></TextField>
@@ -182,9 +227,13 @@ export function AssignmentPage() {
                                     onChange={(e) =>
                                         changeDraftDesc(e.target.value)
                                     }
+                                    error={assignmentDescError}
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
-                                            saveAndExit(draftName, draftDesc)
+                                            saveAndExit(
+                                                draftName,
+                                                draftDesc
+                                            ).catch(console.error)
                                         }
                                     }}
                                 ></TextField>
@@ -196,7 +245,9 @@ export function AssignmentPage() {
                         <Button
                             variant="outlined"
                             className="absolute bottom-5 right-5 font-bold! text-black! "
-                            onClick={() => saveAndExit(draftName, draftDesc)}
+                            onClick={() =>
+                                void saveAndExit(draftName, draftDesc)
+                            }
                         >
                             Save & Exit
                         </Button>
