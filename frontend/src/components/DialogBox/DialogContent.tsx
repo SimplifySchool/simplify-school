@@ -5,5 +5,9 @@ export function DialogContent({
     children: React.ReactNode
     extraClassNames?: string
 }) {
-    return <div className={`px-6 py-4 ${extraClassNames}`}>{children}</div>
+    return (
+        <div className={`px-6 py-4 ${extraClassNames} overflow-y-auto`}>
+            {children}
+        </div>
+    )
 }
