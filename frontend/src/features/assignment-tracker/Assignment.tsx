@@ -8,6 +8,8 @@ import { TextField } from '../../components/TextField'
 import { DialogFooter } from '../../components/DialogBox/DialogFooter'
 import type { AssignmentData, AssignmentModifiable } from './AssignmentPage'
 
+const apiURL = import.meta.env.VITE_API_URL as string
+
 type AssignmentStatus = 'To Do' | 'Doing' | 'Done'
 
 interface AssignmentProps {
@@ -35,7 +37,7 @@ function Assignment({
     const [descError, setDescError] = useState('')
 
     async function modifyAssignment(payload: AssignmentModifiable) {
-        const res = await fetch(`http://localhost:3000/assignments/${id}`, {
+        const res = await fetch(`${apiURL}/assignments/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),

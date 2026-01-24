@@ -19,6 +19,8 @@ import { DayNames } from './DaysOfTheWeek/DayNames'
 
 type MonthOffset = -1 | 0 | 1
 
+const apiURL = import.meta.env.VITE_API_URL as string
+
 interface CalendarCell {
     day: number
     monthOffset: MonthOffset
@@ -99,7 +101,7 @@ export function MonthlyCalendar() {
     useEffect(() => {
         const loadAssignments = async () => {
             try {
-                const res = await fetch('http://localhost:3000/assignments')
+                const res = await fetch(`${apiURL}/assignments`)
                 if (!res.ok) throw new Error('Failed to fetch')
 
                 const data = (await res.json()) as AssignmentData[]

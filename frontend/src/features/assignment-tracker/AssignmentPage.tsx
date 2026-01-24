@@ -7,6 +7,8 @@ import { DialogHeader } from '../../components/DialogBox/DialogHeader'
 import { TextField } from '../../components/TextField'
 import Assignment from './Assignment'
 
+const apiURL = import.meta.env.VITE_API_URL as string
+
 export interface AssignmentData {
     id: number
     title: string
@@ -53,7 +55,7 @@ export function AssignmentPage() {
     async function createAssignment(
         payload: AssignmentModifiable
     ): Promise<AssignmentData> {
-        const res = await fetch('http://localhost:3000/assignments', {
+        const res = await fetch(`${apiURL}/assignments`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -115,7 +117,7 @@ export function AssignmentPage() {
     }
 
     async function removeAssignment(id: number) {
-        const res = await fetch(`http://localhost:3000/assignments/${id}`, {
+        const res = await fetch(`${apiURL}/assignments/${id}`, {
             method: 'DELETE',
         })
 
@@ -130,7 +132,7 @@ export function AssignmentPage() {
     useEffect(() => {
         const loadAssignments = async () => {
             try {
-                const res = await fetch('http://localhost:3000/assignments')
+                const res = await fetch(`${apiURL}/assignments`)
                 if (!res.ok) throw new Error('Failed to fetch')
 
                 const data = (await res.json()) as AssignmentData[]

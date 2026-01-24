@@ -9,6 +9,8 @@ import type { AssignmentData } from '../assignment-tracker/AssignmentPage'
 import { DayBox } from './DaysOfTheWeek/DayBox'
 import { DayNames } from './DaysOfTheWeek/DayNames'
 
+const apiURL = import.meta.env.VITE_API_URL as string
+
 export function WeeklyView() {
     const [clickedDay, setClickedDay] = useState<Date | null>(null)
     const [assignments, setAssignments] = useState<AssignmentData[]>([])
@@ -63,7 +65,7 @@ export function WeeklyView() {
     useEffect(() => {
         const loadAssignments = async () => {
             try {
-                const res = await fetch('http://localhost:3000/assignments')
+                const res = await fetch(`${apiURL}/assignments`)
                 if (!res.ok) throw new Error('Failed to fetch')
 
                 const data = (await res.json()) as AssignmentData[]
