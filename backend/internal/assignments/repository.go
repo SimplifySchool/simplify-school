@@ -76,8 +76,6 @@ Inserts an assignment inside the DB through a POST request from the frontend
 */
 func (r *Repository) InsertAssignment(ctx context.Context, a Assignment) (int, error) {
 
-	var id int
-
 	query := `
         INSERT INTO assignments
             (title, description, completion_status, due_date, created_at, user_id)
@@ -94,13 +92,13 @@ func (r *Repository) InsertAssignment(ctx context.Context, a Assignment) (int, e
 		a.UserID,
 	).Scan(&a.ID)
 
-	id = a.ID
+	
 
 	if err != nil {
 		return 0, err
 	}
 
-	return id, nil
+	return a.ID, nil
 }
 
 func (r *Repository) DeleteAssignment(ctx context.Context, ID int, userID int) error {
