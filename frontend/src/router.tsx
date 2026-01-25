@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { createBrowserRouter, Navigate, useNavigate } from 'react-router-dom'
 import App from './App'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { AssignmentPage } from './features/assignment-tracker/AssignmentPage'
@@ -15,7 +15,8 @@ export const router = createBrowserRouter([
                 element: (
                     <LandingPage
                         sendToAssignmentsPage={() => {
-                            window.location.href = '/assignments'
+                            const navigate = useNavigate()
+                            void navigate('/assignments')
                         }}
                     />
                 ),

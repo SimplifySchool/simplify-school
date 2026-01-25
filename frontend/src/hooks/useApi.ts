@@ -1,7 +1,8 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useCallback } from 'react'
 
-const API_URL = import.meta.env.VITE_API_URL as string
+const API_URL =
+    (import.meta.env.VITE_API_URL as string) || 'http://localhost:3000'
 
 export const useApi = () => {
     const { getAccessTokenSilently, isAuthenticated } = useAuth0()

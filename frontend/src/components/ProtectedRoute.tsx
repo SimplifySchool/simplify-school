@@ -1,6 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { useEffect } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 
 interface ProtectedRouteProps {
     children: React.ReactNode
@@ -8,13 +7,6 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
     const { isAuthenticated, isLoading } = useAuth0()
-    const navigate = useNavigate()
-
-    useEffect(() => {
-        if (!isLoading && !isAuthenticated) {
-            void navigate('/', { replace: true })
-        }
-    }, [isAuthenticated, isLoading, navigate])
 
     if (isLoading) {
         return (
