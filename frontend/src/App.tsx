@@ -2,6 +2,9 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
 import './App.css'
 import Button from './components/Button'
+import { LoginButton } from './components/LoginButton'
+import { LogoutButton } from './components/LogoutButton'
+import { Profile } from './components/Profile'
 import { AssignmentPage } from './features/assignment-tracker/AssignmentPage'
 import { LandingPage } from './features/landing-page/LandingPage'
 import { SchedulePage } from './features/schedule/SchedulePage'
@@ -27,14 +30,30 @@ function App() {
     }
 
     function sendToSchedulePage() {
+        if (!isAuthenticated) {
+            setPage('homepage' as onePage)
+            return
+        }
         setPage('schedule' as onePage)
     }
 
     function sendToAssignmentsPage() {
+        if (!isAuthenticated) {
+            setPage('homepage' as onePage)
+            return
+        }
         setPage('assignments' as onePage)
     }
 
     function renderPage() {
+        // Redirect to homepage if trying to access protected routes without authentication
+        if (
+            !isAuthenticated &&
+            (page === 'schedule' || page === 'assignments')
+        ) {
+            return getHomePage()
+        }
+
         switch (page) {
             case 'assignments':
                 return <AssignmentPage />
@@ -104,32 +123,44 @@ function App() {
 
     return (
         <div className="flex flex-col gap-7.5">
-            <div className="flex flex-row gap-5">
-                <Button
-                    variant="outlined"
-                    className="text-black!"
-                    onClick={sendToHomePage}
-                >
-                    Home
-                </Button>
-                <Button
-                    variant="outlined"
-                    className="text-black!"
-                    onClick={sendToSchedulePage}
-                >
-                    Schedule
-                </Button>
-                <Button
-                    variant="outlined"
-                    className="text-black!"
-                    onClick={sendToAssignmentsPage}
-                >
-                    Assignments
-                </Button>
-                <Button variant="outlined" className="text-black!">
-                    Logout
-                </Button>
-            </div>
+            {/* Header */}
+            <header className="w-full border-b border-gray-200 sticky top-0 z-10 backdrop-blur-sm bg-white/90">
+                <div className="w-full px-4 sm:px-6 lg:px-8">
+                    <div className="flex items-center justify-between h-16">
+                        <div className="flex items-center space-x-3">
+                            <button
+                                className="text-2xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+                                onClick={sendToHomePage}
+                            >
+                                SimplifySchool
+                            </button>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            {isAuthenticated ? (
+                                <>
+                                    <Button
+                                        variant="tonal"
+                                        onClick={sendToAssignmentsPage}
+                                    >
+                                        Assignments
+                                    </Button>
+                                    <Button
+                                        variant="tonal"
+                                        onClick={sendToSchedulePage}
+                                        color="primary"
+                                    >
+                                        Schedule
+                                    </Button>
+                                    <Profile />
+                                    <LogoutButton />
+                                </>
+                            ) : (
+                                <LoginButton />
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </header>
             {renderPage()}
         </div>
     )

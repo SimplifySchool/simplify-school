@@ -1,7 +1,7 @@
 import { useState } from 'react'
+import Button from '../../components/Button'
 import { MonthlyCalendar } from './MonthlyCalendar'
 import { WeeklyView } from './WeeklyView'
-import Button from '../../components/Button'
 
 type onePage = 'weekly' | 'monthly'
 
@@ -28,7 +28,7 @@ export function SchedulePage() {
     }
 
     return (
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-10 m-5">
             <div className="flex flex-row gap-5">
                 <Button
                     variant="outlined"

@@ -11,6 +11,7 @@ import (
 	"github.com/SimplifySchool/simplify-school/backend/internal/users"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 )
@@ -28,6 +29,8 @@ func main() {
 		AllowHeaders:     "Content-Type,Authorization",
 		AllowCredentials: true,
 	}))
+
+	app.Use(logger.New())
 
 	authCfg, err := config.LoadAuthConfig()
 	if err != nil {
@@ -73,12 +76,12 @@ func main() {
 
 	repo := assignments.NewRepository(pgxConn)
 	service := assignments.NewService(repo)
-	handler := assignments.NewHandler(service)
+	handler := assignments.NewHandler(service, userModule.Service)
 
-	api.Get("/assignments", handler.GetAssignments)
-	api.Post("/assignments", handler.CreateAssignment)
-	api.Delete("/assignments/:id", handler.DeleteAssignment)
-	api.Put("/assignments/:id", handler.PutAssignment)
+	api.Get("/assignments", jwtMiddleware, handler.GetAssignments)
+	api.Post("/assignments", jwtMiddleware, handler.CreateAssignment)
+	api.Delete("/assignments/:id", jwtMiddleware, handler.DeleteAssignment)
+	api.Put("/assignments/:id", jwtMiddleware, handler.PutAssignment)
 
 	log.Println("Starting server on :3000")
 	_ = app.Listen(":3000")

@@ -1,36 +1,11 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { LoginButton } from '../../components/LoginButton'
-import { LogoutButton } from '../../components/LogoutButton'
-import { Profile } from '../../components/Profile'
 
 export const LandingPage = () => {
     const { isAuthenticated } = useAuth0()
 
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50">
-            {/* Header */}
-            <header className="w-full border-b border-gray-200 sticky top-0 z-10 backdrop-blur-sm bg-white/90">
-                <div className="w-full px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-16">
-                        <div className="flex items-center space-x-3">
-                            <h1 className="text-2xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                                SimplifySchool
-                            </h1>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            {isAuthenticated ? (
-                                <>
-                                    <Profile />
-                                    <LogoutButton />
-                                </>
-                            ) : (
-                                <LoginButton />
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </header>
-
             {/* Hero Section */}
             <main
                 style={{ minHeight: 'calc(100vh - 4rem)' }}

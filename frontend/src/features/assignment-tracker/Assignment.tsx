@@ -7,8 +7,7 @@ import { DialogContent } from '../../components/DialogBox/DialogContent'
 import { TextField } from '../../components/TextField'
 import { DialogFooter } from '../../components/DialogBox/DialogFooter'
 import type { AssignmentData, AssignmentModifiable } from './AssignmentPage'
-
-const apiURL = import.meta.env.VITE_API_URL as string
+import { useApi } from '../../hooks/useApi'
 
 type AssignmentStatus = 'To Do' | 'Doing' | 'Done'
 
@@ -35,11 +34,11 @@ function Assignment({
     const [assignmentDesc, setAssignmentDesc] = useState(desc)
     const [textError, setTextError] = useState('')
     const [descError, setDescError] = useState('')
+    const { callApi } = useApi()
 
     async function modifyAssignment(payload: AssignmentModifiable) {
-        const res = await fetch(`${apiURL}/assignments/${id}`, {
+        const res = await callApi(`/api/assignments/${id}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
         })
 

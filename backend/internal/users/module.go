@@ -7,13 +7,17 @@ import (
 
 type Module struct {
 	Handler *Handler
+	Service *Service
 }
 
 func NewModule(db *pgxpool.Pool) *Module {
 	repo := NewRepository(db)
 	service := NewService(repo)
 	handler := NewHandler(service)
-	return &Module{Handler: handler}
+	return &Module{
+		Handler: handler,
+		Service: service,
+	}
 }
 
 func (m *Module) RegisterRoutes(appRoutes fiber.Router, jwtMiddleware fiber.Handler) {
