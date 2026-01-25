@@ -56,11 +56,17 @@ function Assignment({
         //Input validation!
         if (name.trim().length === 0) {
             setTextError('Invalid Assignment Name')
-            return
+        } else {
+            setTextError('')
         }
 
         if (desc.trim().length === 0) {
             setDescError('Invalid Description')
+        } else {
+            setDescError('')
+        }
+
+        if (textError != '' || descError != '') {
             return
         }
 
@@ -77,11 +83,6 @@ function Assignment({
             changeAssignmentDesc(newAssignment.description)
             setStatus(newAssignment.completion_status)
 
-            changeDraftName('')
-            changeDraftDesc('')
-            setTextError('')
-            setDescError('')
-
             setVisible(false)
         } catch (err) {
             console.error(err)
@@ -89,19 +90,29 @@ function Assignment({
     }
 
     function changeDraftDesc(desc: string) {
-        setDraftDesc(desc.trim())
+        setDraftDesc(desc)
+        if (descError != '') {
+            if (draftDesc.trim() != '') {
+                setDescError('')
+            }
+        }
     }
 
     function changeAssignmentDesc(desc: string) {
-        setAssignmentDesc(desc)
+        setAssignmentDesc(desc.trim())
     }
 
     function changeDraftName(name: string) {
-        setDraftName(name.trim())
+        setDraftName(name)
+        if (textError != '') {
+            if (draftName.trim() != '') {
+                setTextError('')
+            }
+        }
     }
 
     function changeAssignmentName(name: string) {
-        setAssignmentName(name)
+        setAssignmentName(name.trim())
     }
 
     function showEditDialog() {
@@ -109,6 +120,8 @@ function Assignment({
     }
 
     function hideEditDialog() {
+        setDraftName(assignmentName)
+        setDraftDesc(assignmentDesc)
         setVisible(false)
     }
 

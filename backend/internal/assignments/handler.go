@@ -2,6 +2,7 @@ package assignments
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -91,8 +92,9 @@ func (h *Handler) PutAssignment(c *fiber.Ctx) error {
 	}
 
 	// Validate completion status using shared helper to ensure it is one of the allowed values
-	if err := CompletionStatusValidation(strings.TrimSpace(assignment.CompletionStatus)); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	if err := CompletionStatusValidation(CompletionStatus(strings.TrimSpace(string(assignment.CompletionStatus)))); err == false {
+		msg := fmt.Sprintf("Completion Status does not fit one of the three possibilities: %s", assignment.CompletionStatus)
+		return fiber.NewError(fiber.StatusBadRequest, msg)
 	}
 	response, err2 := h.service.UpdateAssignment(c.Context(), assignment, assignmentID, mockUserID)
 

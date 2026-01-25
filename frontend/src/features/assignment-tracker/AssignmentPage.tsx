@@ -39,6 +39,8 @@ export function AssignmentPage() {
         useAssignments()
 
     function hideEditDialog() {
+        setDraftName('')
+        setDraftDesc('')
         setInitDialogBoxStatus(false)
     }
 
@@ -47,11 +49,21 @@ export function AssignmentPage() {
     }
 
     function changeDraftName(name: string) {
-        setDraftName(name.trim())
+        setDraftName(name)
+        if (assignmentNameError != '') {
+            if (draftName.trim() != '') {
+                setAssignmentNameError('')
+            }
+        }
     }
 
-    function changeDraftDesc(name: string) {
-        setDraftDesc(name.trim())
+    function changeDraftDesc(desc: string) {
+        setDraftDesc(desc)
+        if (assignmentDescError != '') {
+            if (draftDesc.trim() != '') {
+                setAssignmentDescError('')
+            }
+        }
     }
 
     async function createAssignment(
@@ -81,16 +93,18 @@ export function AssignmentPage() {
     async function saveAndExit(name: string, desc: string) {
         if (name.trim().length === 0) {
             setAssignmentNameError('Invalid Assignment Name!')
-            return
         } else {
             setAssignmentNameError('')
         }
 
         if (desc.trim().length === 0) {
             setAssignmentDescError('Invalid Assignment Description!')
-            return
         } else {
             setAssignmentDescError('')
+        }
+
+        if (assignmentDescError != '' || assignmentNameError != '') {
+            return
         }
 
         setDraftName('')

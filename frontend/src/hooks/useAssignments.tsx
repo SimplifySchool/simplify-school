@@ -5,29 +5,34 @@ const apiURL = import.meta.env.VITE_API_URL as string
 
 export function useAssignments() {
     const [assignments, setAssignments] = useState<AssignmentData[]>([])
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         const loadAssignments = async () => {
             try {
                 const res = await fetch(`${apiURL}/assignments`)
-                if (!res.ok) throw new Error('Failed to fetch')
+                if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`)
 
                 const data = (await res.json()) as AssignmentData[]
                 setAssignments(data)
             } catch (error) {
-                console.log(error)
+                if (error instanceof Error) {
+                    setError(error.message)
+                } else {
+                    setError('Something went wrong')
+                }
             }
         }
 
         loadAssignments().catch((err) => console.error(err))
     }, [])
 
-    function replaceAssignmets(newAssignments: AssignmentData[]) {
+    function replaceAssignments(newAssignments: AssignmentData[]) {
         setAssignments(newAssignments)
     }
 
     function updateAssignments(newAssignment: AssignmentData) {
-        if (assignments === null) {
+        if (assignments.length == 0) {
             setAssignments([newAssignment])
         } else {
             setAssignments((prev) => [...prev, newAssignment])
@@ -42,6 +47,7 @@ export function useAssignments() {
         assignments,
         updateAssignments,
         deleteAssignment,
-        replaceAssignmets,
+        replaceAssignments,
+        error, // The error is being returned so it can be displayed to the user correctly
     }
 }
