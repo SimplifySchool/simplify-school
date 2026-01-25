@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import './App.css'
-import Button from './components/Button'
 import { AssignmentPage } from './features/assignment-tracker/AssignmentPage'
 import { SchedulePage } from './features/schedule/SchedulePage'
+import Button from './components/Button'
 
 type onePage = 'homepage' | 'schedule' | 'assignments'
 
