@@ -1,7 +1,6 @@
 import React from 'react'
-
-export interface ButtonProps
-    extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+// This is a button
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     icon?: React.ReactNode
     iconPosition?: 'left' | 'right'
     iconOnly?: boolean

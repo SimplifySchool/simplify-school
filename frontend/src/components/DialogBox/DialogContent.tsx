@@ -11,3 +11,4 @@ export function DialogContent({
         </div>
     )
 }
+// Content found in a Dialog box

@@ -7,7 +7,7 @@ interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
     hAlign?: 'left' | 'center' | 'right'
     error?: string
 }
-
+// This is a text field
 export function TextField({
     variant = 'outlined',
     height = 'md',

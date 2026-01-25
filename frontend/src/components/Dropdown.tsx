@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-
+// This is a dropdown
 interface Option {
     value: string
     label?: string
@@ -36,9 +36,9 @@ export default function Dropdown({
     const opts = normalizeOptions(options)
     const isControlled = value !== undefined && value !== null
     const [internalValue, setInternalValue] = useState<string>(
-        isControlled ? value ?? '' : ''
+        isControlled ? (value ?? '') : ''
     )
-    const selectedValue = isControlled ? value ?? '' : internalValue
+    const selectedValue = isControlled ? (value ?? '') : internalValue
 
     const currClassName = opts.find((opt) => {
         const val = typeof opt === 'string' ? opt : opt.value
