@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/SimplifySchool/simplify-school/backend/internal/assignments"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -40,6 +41,15 @@ func main() {
 	if err != nil {
 		log.Fatal("Unable to connect to database: ", err)
 	}
+
+	repo := assignments.NewRepository(pgxConn)
+	service := assignments.NewService(repo)
+	handler := assignments.NewHandler(service)
+
+	app.Get("/assignments", handler.GetAssignments)
+	app.Post("/assignments", handler.CreateAssignment)
+	app.Delete("/assignments/:id", handler.DeleteAssignment)
+	app.Put("/assignments/:id", handler.PutAssignment)
 
 	app.Listen(":3000")
 }
