@@ -91,8 +91,8 @@ function Assignment({
 
     function changeDraftDesc(desc: string) {
         setDraftDesc(desc)
-        if (descError != '') {
-            if (draftDesc.trim() != '') {
+        if (descError !== '') {
+            if (draftDesc.trim() !== '') {
                 setDescError('')
             }
         }
@@ -104,8 +104,8 @@ function Assignment({
 
     function changeDraftName(name: string) {
         setDraftName(name)
-        if (textError != '') {
-            if (draftName.trim() != '') {
+        if (textError !== '') {
+            if (draftName.trim() !== '') {
                 setTextError('')
             }
         }

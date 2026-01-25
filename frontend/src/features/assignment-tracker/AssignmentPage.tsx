@@ -50,8 +50,8 @@ export function AssignmentPage() {
 
     function changeDraftName(name: string) {
         setDraftName(name)
-        if (assignmentNameError != '') {
-            if (draftName.trim() != '') {
+        if (assignmentNameError !== '') {
+            if (draftName.trim() !== '') {
                 setAssignmentNameError('')
             }
         }
@@ -59,8 +59,8 @@ export function AssignmentPage() {
 
     function changeDraftDesc(desc: string) {
         setDraftDesc(desc)
-        if (assignmentDescError != '') {
-            if (draftDesc.trim() != '') {
+        if (assignmentDescError !== '') {
+            if (draftDesc.trim() !== '') {
                 setAssignmentDescError('')
             }
         }
