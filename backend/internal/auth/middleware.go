@@ -45,7 +45,6 @@ func NewMiddleware(jwtValidator *validator.Validator) (fiber.Handler, error) {
 		}
 
 		// Store validated claims in context for use in handlers
-		c.Locals("token", token)
 		c.Locals("claims", token)
 
 		return c.Next()

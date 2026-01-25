@@ -152,7 +152,7 @@ func (h *Handler) PutAssignment(c *fiber.Ctx) error {
 		if errors.Is(err, ErrAssignmentNotFound) {
 			return fiber.NewError(fiber.StatusNotFound, err.Error())
 		}
-		return fiber.NewError(fiber.StatusInternalServerError, err	.Error())
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
 	return c.Status(fiber.StatusOK).JSON(response)

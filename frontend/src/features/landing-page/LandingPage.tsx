@@ -1,13 +1,16 @@
 import { useAuth0 } from '@auth0/auth0-react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '../../components/Button'
 import { LoginButton } from '../../components/LoginButton'
 
-interface LandingPageProps {
-    sendToAssignmentsPage: () => void
-}
-
-export const LandingPage = ({ sendToAssignmentsPage }: LandingPageProps) => {
+export const LandingPage = () => {
     const { isAuthenticated } = useAuth0()
+
+    const navigate = useNavigate()
+
+    function sendToAssignmentsPage() {
+        void navigate('/assignments')
+    }
 
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50">

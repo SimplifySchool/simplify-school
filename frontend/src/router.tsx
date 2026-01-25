@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate, useNavigate } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 import App from './App'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { AssignmentPage } from './features/assignment-tracker/AssignmentPage'
@@ -12,14 +12,7 @@ export const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: (
-                    <LandingPage
-                        sendToAssignmentsPage={() => {
-                            const navigate = useNavigate()
-                            void navigate('/assignments')
-                        }}
-                    />
-                ),
+                element: <LandingPage />,
             },
             {
                 path: 'assignments',

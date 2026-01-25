@@ -24,7 +24,7 @@ func main() {
 	}
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:5173",
+		AllowOrigins:     os.Getenv("CORS_ORIGINS"),
 		AllowMethods:     "GET,PUT,POST,DELETE",
 		AllowHeaders:     "Content-Type,Authorization",
 		AllowCredentials: true,
@@ -48,10 +48,14 @@ func main() {
 	}
 
 	// Connect to PostgreSQL database
+	databaseName := os.Getenv("DATABASE_NAME")
+	if databaseName == "" {
+		databaseName = "postgres"
+	}
 	pgxURL := "postgres://" +
 		os.Getenv("POSTGRES_USER") + ":" +
 		os.Getenv("POSTGRES_PASSWORD") +
-		"@localhost:5432/postgres"
+		"@" + os.Getenv("DATABASE_URL") + "/" + databaseName
 
 	pgxConn, err := pgxpool.New(context.Background(), pgxURL)
 	if err != nil {
@@ -64,12 +68,6 @@ func main() {
 		log.Fatal("Unable to ping database: ", err)
 	}
 	api := app.Group("/api")
-	// Public routes (no authentication required)
-	api.Get("/public", auth.PublicHandler)
-
-	// Protected routes (authentication required)
-	api.Get("/private", jwtMiddleware, auth.PrivateHandler)
-	api.Get("/scoped", jwtMiddleware, auth.ScopedHandler)
 
 	userModule := users.NewModule(pgxConn)
 	userModule.RegisterRoutes(api, jwtMiddleware)
@@ -83,6 +81,10 @@ func main() {
 	api.Delete("/assignments/:id", jwtMiddleware, handler.DeleteAssignment)
 	api.Put("/assignments/:id", jwtMiddleware, handler.PutAssignment)
 
-	log.Println("Starting server on :3000")
-	_ = app.Listen(":3000")
+	serverPort := os.Getenv("SERVER_PORT")
+	if serverPort == "" {
+		serverPort = "3000"
+	}
+	log.Println("Starting server on :" + serverPort)
+	_ = app.Listen(":" + serverPort)
 }

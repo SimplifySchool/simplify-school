@@ -56,7 +56,8 @@ function App() {
         syncUser().catch((err) => {
             console.error('Error in syncUser:', err)
         })
-    }, [isAuthenticated, user, callApi])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isAuthenticated, user])
 
     if (isLoading) {
         return (

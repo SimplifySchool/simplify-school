@@ -52,7 +52,7 @@ func (h *Handler) SyncUser(ctx *fiber.Ctx) error {
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed to sync user.",
-			"error":   err.Error(),
+			"error":   "Syncing the user failed.",
 		})
 	}
 
