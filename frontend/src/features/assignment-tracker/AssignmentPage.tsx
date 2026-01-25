@@ -5,10 +5,9 @@ import { DialogContent } from '../../components/DialogBox/DialogContent'
 import { DialogFooter } from '../../components/DialogBox/DialogFooter'
 import { DialogHeader } from '../../components/DialogBox/DialogHeader'
 import { TextField } from '../../components/TextField'
-import Assignment from './Assignment'
+import { useApi } from '../../hooks/useApi'
 import { useAssignments } from '../../hooks/useAssignments'
-
-const apiURL = import.meta.env.VITE_API_URL as string
+import Assignment from './Assignment'
 
 export interface AssignmentData {
     id: number
@@ -37,6 +36,7 @@ export function AssignmentPage() {
     const [assignmentDescError, setAssignmentDescError] = useState('')
     const { assignments, updateAssignments, deleteAssignment } =
         useAssignments()
+    const { callApi } = useApi()
 
     function hideEditDialog() {
         setDraftName('')
@@ -69,11 +69,8 @@ export function AssignmentPage() {
     async function createAssignment(
         payload: AssignmentModifiable
     ): Promise<AssignmentData> {
-        const res = await fetch(`${apiURL}/assignments`, {
+        const res = await callApi('/api/assignments', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(payload),
         })
 
@@ -129,7 +126,7 @@ export function AssignmentPage() {
     }
 
     async function removeAssignment(id: number) {
-        const res = await fetch(`${apiURL}/assignments/${id}`, {
+        const res = await callApi(`/api/assignments/${id}`, {
             method: 'DELETE',
         })
 
@@ -143,7 +140,7 @@ export function AssignmentPage() {
 
     return (
         <>
-            <div className="flex flex-col gap-20">
+            <div className="flex flex-col gap-20 m-5">
                 <div className="flex flex-col gap-5">
                     <h2 className="border-b text-left text-xl font-bold">
                         Your Assignments:
@@ -245,7 +242,7 @@ export function AssignmentPage() {
                     <DialogFooter>
                         <Button
                             variant="outlined"
-                            className="absolute bottom-5 right-5 font-bold! text-black! "
+                            className="absolute bottom-5 right-5 font-bold! text-black!"
                             onClick={() =>
                                 void saveAndExit(draftName, draftDesc)
                             }

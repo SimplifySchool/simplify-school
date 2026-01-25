@@ -2,9 +2,11 @@ CREATE TYPE assignment_status AS ENUM ('To Do', 'Doing', 'Done');
 
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50),
-    email VARCHAR(255) UNIQUE,
-    password VARCHAR(255)
+    auth0_id VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(255),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS assignments (

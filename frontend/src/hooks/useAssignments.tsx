@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
 import type { AssignmentData } from '../features/assignment-tracker/AssignmentPage'
-
-const apiURL = import.meta.env.VITE_API_URL as string
+import { useApi } from './useApi'
 
 export function useAssignments() {
     const [assignments, setAssignments] = useState<AssignmentData[]>([])
     const [error, setError] = useState<string | null>(null)
+    const { callApi } = useApi()
 
     useEffect(() => {
         const loadAssignments = async () => {
             try {
-                const res = await fetch(`${apiURL}/assignments`)
+                const res = await callApi('/api/assignments')
                 if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`)
 
                 const data = (await res.json()) as AssignmentData[]
@@ -25,7 +25,7 @@ export function useAssignments() {
         }
 
         loadAssignments().catch((err) => console.error(err))
-    }, [])
+    }, [callApi])
 
     function replaceAssignments(newAssignments: AssignmentData[]) {
         setAssignments(newAssignments)

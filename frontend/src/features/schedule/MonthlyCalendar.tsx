@@ -13,9 +13,9 @@ import { Dialog } from '../../components/DialogBox/Dialog'
 import { DialogContent } from '../../components/DialogBox/DialogContent'
 import { DialogFooter } from '../../components/DialogBox/DialogFooter'
 import { DialogHeader } from '../../components/DialogBox/DialogHeader'
+import { useAssignments } from '../../hooks/useAssignments'
 import { DayBox } from './DaysOfTheWeek/DayBox'
 import { DayNames } from './DaysOfTheWeek/DayNames'
-import { useAssignments } from '../../hooks/useAssignments'
 
 type MonthOffset = -1 | 0 | 1
 
@@ -62,9 +62,32 @@ export function MonthlyCalendar() {
 
     const clickedISODate = clickedDay ? format(clickedDay, 'yyyy-MM-dd') : null
 
+    function getAssignmentsForDate(date: Date) {
+        const dateISO = format(date, 'yyyy-MM-dd')
+        return assignments.filter((a) => {
+            // Include assignments with matching due dates
+            if (a.due_date?.startsWith(dateISO)) {
+                return true
+            }
+            // Include assignments without due dates on their creation date
+            if (a.due_date === null && a.created_at?.startsWith(dateISO)) {
+                return true
+            }
+            return false
+        })
+    }
+
     const assignmentsForDay = clickedISODate
-        ? assignments.filter((a) => a.due_date?.startsWith(clickedISODate))
+        ? getAssignmentsForDate(clickedDay!)
         : []
+
+    const assignmentsWithDueDate = assignmentsForDay.filter(
+        (a) => a.due_date !== null
+    )
+
+    const assignmentsWithoutDueDate = assignmentsForDay.filter(
+        (a) => a.due_date === null
+    )
 
     //previous month
     for (let i = 0; i <= startWeekIndex; i++) {
@@ -110,15 +133,21 @@ export function MonthlyCalendar() {
                         ))}
                     </div>
                     <div className="grid grid-cols-7">
-                        {cells.map((cell, idx) => (
-                            <DayBox
-                                onClick={() => showDayDialog(cell.date)}
-                                key={`${cell.monthOffset}-${cell.day}-${idx}`}
-                                num={cell.day}
-                                isCurrentMonth={cell.monthOffset === 0}
-                                date={cell.date}
-                            />
-                        ))}
+                        {cells.map((cell, idx) => {
+                            const cellAssignments = getAssignmentsForDate(
+                                cell.date
+                            )
+                            return (
+                                <DayBox
+                                    onClick={() => showDayDialog(cell.date)}
+                                    key={`${cell.monthOffset}-${cell.day}-${idx}`}
+                                    num={cell.day}
+                                    isCurrentMonth={cell.monthOffset === 0}
+                                    date={cell.date}
+                                    assignments={cellAssignments}
+                                />
+                            )
+                        })}
                     </div>
                 </div>
             </div>
@@ -138,25 +167,63 @@ export function MonthlyCalendar() {
                     <div className="flex flex-col gap-4 p-2">
                         {assignmentsForDay.length === 0 ? (
                             <p className="italic text-gray-500">
-                                No assignments for this day
+                                No assignments on this day
                             </p>
                         ) : (
-                            assignmentsForDay.map((a) => (
-                                <div
-                                    key={a.id}
-                                    className="border rounded-md p-3 flex flex-col gap-1"
-                                >
-                                    <h3 className="font-bold text-lg">
-                                        {a.title}
-                                    </h3>
-                                    <p className="text-sm text-gray-700">
-                                        {a.description}
-                                    </p>
-                                    <span className="text-xs italic">
-                                        Status: {a.completion_status}
-                                    </span>
-                                </div>
-                            ))
+                            <>
+                                {assignmentsWithDueDate.length > 0 && (
+                                    <>
+                                        <h4 className="font-semibold text-md">
+                                            Due on this day:
+                                        </h4>
+                                        {assignmentsWithDueDate.map((a) => (
+                                            <div
+                                                key={a.id}
+                                                className="border rounded-md p-3 flex flex-col gap-1"
+                                            >
+                                                <h3 className="font-bold text-lg">
+                                                    {a.title}
+                                                </h3>
+                                                <p className="text-sm text-gray-700">
+                                                    {a.description}
+                                                </p>
+                                                <span className="text-xs italic">
+                                                    Status:{' '}
+                                                    {a.completion_status}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </>
+                                )}
+
+                                {assignmentsWithoutDueDate.length > 0 && (
+                                    <>
+                                        {assignmentsWithDueDate.length > 0 && (
+                                            <hr className="my-2" />
+                                        )}
+                                        <h4 className="font-semibold text-md text-gray-600">
+                                            Created on this day (no due date):
+                                        </h4>
+                                        {assignmentsWithoutDueDate.map((a) => (
+                                            <div
+                                                key={a.id}
+                                                className="border border-gray-300 rounded-md p-3 flex flex-col gap-1 bg-gray-50"
+                                            >
+                                                <h3 className="font-bold text-lg">
+                                                    {a.title}
+                                                </h3>
+                                                <p className="text-sm text-gray-700">
+                                                    {a.description}
+                                                </p>
+                                                <span className="text-xs italic">
+                                                    Status:{' '}
+                                                    {a.completion_status}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </>
+                                )}
+                            </>
                         )}
                     </div>
                 </DialogContent>
