@@ -59,21 +59,17 @@ func main() {
 	if err != nil {
 		log.Fatal("Unable to ping database: ", err)
 	}
-
-	// Initialize user module (repository, service, handler)
-	userRepo := users.NewRepository(pgxConn)
-	userService := users.NewService(userRepo)
-	userHandler := users.NewHandler(userService)
-
+	api := app.Group("/api")
 	// Public routes (no authentication required)
-	app.Get("/api/public", auth.PublicHandler)
+	api.Get("/public", auth.PublicHandler)
 
 	// Protected routes (authentication required)
-	app.Get("/api/private", jwtMiddleware, auth.PrivateHandler)
-	app.Get("/api/scoped", jwtMiddleware, auth.ScopedHandler)
+	api.Get("/private", jwtMiddleware, auth.PrivateHandler)
+	api.Get("/scoped", jwtMiddleware, auth.ScopedHandler)
 
-	// User endpoints
-	app.Post("/api/users/sync", jwtMiddleware, userHandler.SyncUser)
+	userModule := users.NewModule(pgxConn)
+	userModule.RegisterRoutes(api, jwtMiddleware)
 
-	app.Listen(":3000")
+	log.Println("Starting server on :3000")
+	_ = app.Listen(":3000")
 }

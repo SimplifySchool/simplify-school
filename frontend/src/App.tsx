@@ -1,8 +1,8 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect } from 'react'
 import './App.css'
+import { LandingPage } from './features/landing-page/LandingPage'
 import { useApi } from './hooks/useApi'
-import { LandingPage } from './landing-page/LandingPage'
 
 function App() {
     const { isAuthenticated, isLoading, error, user } = useAuth0()
