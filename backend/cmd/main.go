@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/SimplifySchool/simplify-school/backend/internal/assignments"
 	"github.com/SimplifySchool/simplify-school/backend/internal/auth"
 	"github.com/SimplifySchool/simplify-school/backend/internal/config"
 	"github.com/SimplifySchool/simplify-school/backend/internal/users"
@@ -69,6 +70,15 @@ func main() {
 
 	userModule := users.NewModule(pgxConn)
 	userModule.RegisterRoutes(api, jwtMiddleware)
+
+	repo := assignments.NewRepository(pgxConn)
+	service := assignments.NewService(repo)
+	handler := assignments.NewHandler(service)
+
+	api.Get("/assignments", handler.GetAssignments)
+	api.Post("/assignments", handler.CreateAssignment)
+	api.Delete("/assignments/:id", handler.DeleteAssignment)
+	api.Put("/assignments/:id", handler.PutAssignment)
 
 	log.Println("Starting server on :3000")
 	_ = app.Listen(":3000")
