@@ -242,7 +242,7 @@ export function AssignmentPage() {
                     <DialogFooter>
                         <Button
                             variant="outlined"
-                            className="absolute bottom-5 right-5 font-bold! text-black! "
+                            className="absolute bottom-5 right-5 font-bold! text-black!"
                             onClick={() =>
                                 void saveAndExit(draftName, draftDesc)
                             }

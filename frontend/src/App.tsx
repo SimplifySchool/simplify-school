@@ -1,67 +1,34 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+import { Outlet, useNavigate } from 'react-router-dom'
 import './App.css'
 import Button from './components/Button'
 import { LoginButton } from './components/LoginButton'
 import { LogoutButton } from './components/LogoutButton'
 import { Profile } from './components/Profile'
-import { AssignmentPage } from './features/assignment-tracker/AssignmentPage'
-import { LandingPage } from './features/landing-page/LandingPage'
-import { SchedulePage } from './features/schedule/SchedulePage'
 import { useApi } from './hooks/useApi'
 
-type onePage = 'homepage' | 'schedule' | 'assignments'
-
 function App() {
-    const DEFAULT_PAGE = 'homepage' as onePage
-
-    const [page, setPage] = useState(DEFAULT_PAGE)
+    const navigate = useNavigate()
 
     function sendToHomePage() {
-        setPage('homepage' as onePage)
-    }
-
-    function getHomePage() {
-        return (
-            <>
-                <LandingPage />
-            </>
-        )
+        void navigate('/')
     }
 
     function sendToSchedulePage() {
         if (!isAuthenticated) {
-            setPage('homepage' as onePage)
+            void navigate('/')
             return
         }
-        setPage('schedule' as onePage)
+        void navigate('/schedule')
     }
 
     function sendToAssignmentsPage() {
         if (!isAuthenticated) {
-            setPage('homepage' as onePage)
+            void navigate('/')
             return
         }
-        setPage('assignments' as onePage)
-    }
-
-    function renderPage() {
-        // Redirect to homepage if trying to access protected routes without authentication
-        if (
-            !isAuthenticated &&
-            (page === 'schedule' || page === 'assignments')
-        ) {
-            return getHomePage()
-        }
-
-        switch (page) {
-            case 'assignments':
-                return <AssignmentPage />
-            case 'homepage':
-                return getHomePage()
-            case 'schedule':
-                return <SchedulePage />
-        }
+        void navigate('/assignments')
     }
 
     const { isAuthenticated, isLoading, error, user } = useAuth0()
@@ -161,7 +128,7 @@ function App() {
                     </div>
                 </div>
             </header>
-            {renderPage()}
+            <Outlet />
         </div>
     )
 }

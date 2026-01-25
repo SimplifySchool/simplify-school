@@ -1,7 +1,12 @@
 import { useAuth0 } from '@auth0/auth0-react'
+import { Button } from '../../components/Button'
 import { LoginButton } from '../../components/LoginButton'
 
-export const LandingPage = () => {
+interface LandingPageProps {
+    sendToAssignmentsPage: () => void
+}
+
+export const LandingPage = ({ sendToAssignmentsPage }: LandingPageProps) => {
     const { isAuthenticated } = useAuth0()
 
     return (
@@ -25,15 +30,15 @@ export const LandingPage = () => {
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         {isAuthenticated ? (
-                            <button className="px-8 py-4 bg-linear-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200">
-                                Go to Dashboard
-                            </button>
+                            <Button
+                                onClick={sendToAssignmentsPage}
+                                className="bg-linear-to-r from-blue-600 to-purple-600 text-white font-semibold hover:shadow-xl transition-all duration-200"
+                            >
+                                Go to Assignments
+                            </Button>
                         ) : (
                             <>
                                 <LoginButton />
-                                <button className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg shadow-md hover:shadow-xl transition-all duration-200 border-2 border-blue-600">
-                                    Learn More
-                                </button>
                             </>
                         )}
                     </div>
