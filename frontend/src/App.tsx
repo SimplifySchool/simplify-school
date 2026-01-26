@@ -1,37 +1,78 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { AssignmentPage } from './features/assignment-tracker/AssignmentPage'
+import { SchedulePage } from './features/schedule/SchedulePage'
+import Button from './components/Button'
+
+type onePage = 'homepage' | 'schedule' | 'assignments'
 
 function App() {
-    const [count, setCount] = useState(0)
+    const DEFAULT_PAGE = 'homepage' as onePage
+
+    const [page, setPage] = useState(DEFAULT_PAGE)
+
+    function sendToHomePage() {
+        setPage('homepage' as onePage)
+    }
+
+    function getTempHomePage() {
+        return (
+            <>
+                <div className="">Welcome to the homepage</div>
+            </>
+        )
+    }
+
+    function sendToSchedulePage() {
+        setPage('schedule' as onePage)
+    }
+
+    function sendToAssignmentsPage() {
+        setPage('assignments' as onePage)
+    }
+
+    function renderPage() {
+        switch (page) {
+            case 'assignments':
+                return <AssignmentPage />
+            case 'homepage':
+                return getTempHomePage()
+            case 'schedule':
+                return <SchedulePage />
+        }
+    }
 
     return (
         <>
-            <div>
-                <a href="https://vite.dev" target="_blank">
-                    <img src={viteLogo} className="logo" alt="Vite logo" />
-                </a>
-                <a href="https://react.dev" target="_blank">
-                    <img
-                        src={reactLogo}
-                        className="logo react"
-                        alt="React logo"
-                    />
-                </a>
+            <div className="flex flex-col gap-7.5">
+                <div className="flex flex-row gap-5">
+                    <Button
+                        variant="outlined"
+                        className="text-black!"
+                        onClick={sendToHomePage}
+                    >
+                        Home
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        className="text-black!"
+                        onClick={sendToSchedulePage}
+                    >
+                        Schedule
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        className="text-black!"
+                        onClick={sendToAssignmentsPage}
+                    >
+                        Assignments
+                    </Button>
+                    <Button variant="outlined" className="text-black!">
+                        Logout
+                    </Button>
+                </div>
+                {renderPage()}
             </div>
-            <h1>Vite + React</h1>
-            <div className="card">
-                <button onClick={() => setCount((count) => count + 1)}>
-                    count is {count}
-                </button>
-                <p>
-                    Edit <code>src/App.tsx</code> and save to test HMR
-                </p>
-            </div>
-            <p className="read-the-docs">
-                Click on the Vite and React logos to learn more
-            </p>
         </>
     )
 }
