@@ -15,12 +15,13 @@ import (
 func main() {
 	app := fiber.New()
 	err := godotenv.Load()
+	// The app will assume variables are provided by Kubernetes.
 	if err != nil {
-		log.Fatal("Error loading .env file: ", err)
+		log.Println("No .env file found")
 	}
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:5173",
+		AllowOrigins:     os.Getenv("CORS_ORIGINS"),
 		AllowMethods:     "GET,PUT,POST,DELETE",
 		AllowHeaders:     "Content-Type",
 		AllowCredentials: true,
@@ -29,7 +30,8 @@ func main() {
 	pgxURL := "postgres://" +
 		os.Getenv("POSTGRES_USER") + ":" +
 		os.Getenv("POSTGRES_PASSWORD") +
-		"@localhost:5432/postgres"
+		"@" + os.Getenv("DATABASE_URL") + "/" +
+		os.Getenv("DATABASE_NAME")
 
 	pgxConn, err := pgxpool.New(context.Background(), pgxURL)
 	if err != nil {
@@ -41,7 +43,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Unable to connect to database: ", err)
 	}
-
+	log.Println("Listening to database")
 	repo := assignments.NewRepository(pgxConn)
 	service := assignments.NewService(repo)
 	handler := assignments.NewHandler(service)
@@ -51,5 +53,6 @@ func main() {
 	app.Delete("/assignments/:id", handler.DeleteAssignment)
 	app.Put("/assignments/:id", handler.PutAssignment)
 
-	app.Listen(":3000")
+	log.Println("Listening on port:" + os.Getenv("SERVER_PORT"))
+	app.Listen(":" + os.Getenv("SERVER_PORT"))
 }

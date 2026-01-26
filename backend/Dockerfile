@@ -1,6 +1,6 @@
 # Stage 1: Builder
 # Use the official Go image to build the app
-FROM golang:latest-alpine AS builder
+FROM golang:latest AS builder
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -17,7 +17,7 @@ COPY . .
 # Build the application
 # CGO_ENABLED=0: Disables C bindings for a static binary (required for Alpine)
 # GOOS=linux: Ensures we build for Linux
-RUN CGO_ENABLED=0 GOOS=linux go build -o backend main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o backend ./cmd/main.go
 
 # Stage 2: Runner
 # Use a tiny Alpine image for the final container
