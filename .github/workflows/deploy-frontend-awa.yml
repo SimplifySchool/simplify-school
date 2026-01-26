@@ -1,0 +1,72 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "frontend/**"
+      - "k8s/**"
+      - ".github/workflows/deploy-frontend-awa.yml"
+  workflow_dispatch:
+
+env:
+  AZURE_CONTAINER_REGISTRY: simplifyschoolacr # e.g., simplifyschoolacr
+  IMAGE_NAME: simplify-school-frontend
+  AKS_CLUSTER_NAME: simplify-school
+  AKS_RESOURCE_GROUP: Simplify-School
+  NAMESPACE: simplify-school
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
+jobs:
+  build-artifacts:
+    name: Build Frontend Artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "24.x"
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-build
+          path: ./frontend/build
+  deploy-to-azure-web-app:
+    name: Deploy to Azure Web App
+    runs-on: ubuntu-latest
+    needs: build-artifacts
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: frontend-build
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: simplifyschool
+          slot-name: Production
+          package: ./frontend-build
