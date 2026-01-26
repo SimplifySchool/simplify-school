@@ -6,18 +6,45 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/SimplifySchool/simplify-school/backend/internal/users"
+	"github.com/auth0/go-jwt-middleware/v3/validator"
 	"github.com/gofiber/fiber/v2"
 )
 
 type Handler struct {
-	service *Service
+	service     *Service
+	userService *users.Service
 }
 
-func NewHandler(service *Service) *Handler {
-	return &Handler{service: service}
+func NewHandler(service *Service, userService *users.Service) *Handler {
+	return &Handler{
+		service:     service,
+		userService: userService,
+	}
 }
 
-const mockUserID = 1 // We use a mock user ID for now because auth has not been implemented yet
+// getAuthenticatedUserID extracts the user's Auth0 ID from the JWT token and retrieves their database ID
+func (h *Handler) getAuthenticatedUserID(c *fiber.Ctx) (int, error) {
+	// Extract validated claims from context
+	token, ok := c.Locals("token").(*validator.ValidatedClaims)
+	if !ok {
+		return 0, fiber.NewError(fiber.StatusUnauthorized, "Unauthorized")
+	}
+
+	// Get Auth0 ID (subject) from token
+	auth0ID := token.RegisteredClaims.Subject
+	if auth0ID == "" {
+		return 0, fiber.NewError(fiber.StatusUnauthorized, "Invalid token: missing subject")
+	}
+
+	// Fetch user from database
+	user, err := h.userService.GetUserByAuth0ID(c.Context(), auth0ID)
+	if err != nil {
+		return 0, fiber.NewError(fiber.StatusNotFound, "User not found. Please sync your account first.")
+	}
+
+	return user.ID, nil
+}
 
 func (h *Handler) CreateAssignment(c *fiber.Ctx) error {
 	var req AssignmentInput
@@ -34,7 +61,13 @@ func (h *Handler) CreateAssignment(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "Description is required")
 	}
 
-	res, err := h.service.CreateAssignment(c.Context(), req, mockUserID)
+	// Get authenticated user ID
+	userID, err := h.getAuthenticatedUserID(c)
+	if err != nil {
+		return err
+	}
+
+	res, err := h.service.CreateAssignment(c.Context(), req, userID)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
@@ -43,8 +76,13 @@ func (h *Handler) CreateAssignment(c *fiber.Ctx) error {
 }
 
 func (h *Handler) GetAssignments(c *fiber.Ctx) error {
+	// Get authenticated user ID
+	userID, err := h.getAuthenticatedUserID(c)
+	if err != nil {
+		return err
+	}
 
-	assignments, err := h.service.GetAssignments(c.Context(), mockUserID)
+	assignments, err := h.service.GetAssignments(c.Context(), userID)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
@@ -59,7 +97,13 @@ func (h *Handler) DeleteAssignment(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid Assignment ID")
 	}
 
-	deleteAssignmentError := h.service.DeleteAssignment(c.Context(), assignmentID, mockUserID)
+	// Get authenticated user ID
+	userID, err := h.getAuthenticatedUserID(c)
+	if err != nil {
+		return err
+	}
+
+	deleteAssignmentError := h.service.DeleteAssignment(c.Context(), assignmentID, userID)
 	if deleteAssignmentError != nil {
 		if errors.Is(deleteAssignmentError, ErrAssignmentNotFound) {
 			return fiber.NewError(fiber.StatusNotFound, deleteAssignmentError.Error())
@@ -96,13 +140,19 @@ func (h *Handler) PutAssignment(c *fiber.Ctx) error {
 		msg := fmt.Sprintf("Completion Status does not fit one of the three possibilities: %s", assignment.CompletionStatus)
 		return fiber.NewError(fiber.StatusBadRequest, msg)
 	}
-	response, err2 := h.service.UpdateAssignment(c.Context(), assignment, assignmentID, mockUserID)
 
-	if err2 != nil {
-		if errors.Is(err2, ErrAssignmentNotFound) {
-			return fiber.NewError(fiber.StatusNotFound, err2.Error())
+	// Get authenticated user ID
+	userID, err := h.getAuthenticatedUserID(c)
+	if err != nil {
+		return err
+	}
+
+	response, err := h.service.UpdateAssignment(c.Context(), assignment, assignmentID, userID)
+	if err != nil {
+		if errors.Is(err, ErrAssignmentNotFound) {
+			return fiber.NewError(fiber.StatusNotFound, err.Error())
 		}
-		return fiber.NewError(fiber.StatusInternalServerError, err2.Error())
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
 	return c.Status(fiber.StatusOK).JSON(response)
