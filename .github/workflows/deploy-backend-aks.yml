@@ -79,10 +79,10 @@ jobs:
       - name: Create/Update Secrets
         run: |
           kubectl create secret generic backend-secret \
-            --from-literal=POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
-            --from-literal=POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
-            --from-literal=DATABASE_URL=${{ secrets.DATABASE_URL }} \
-            --from-literal=DATABASE_NAME=${{ secrets.DATABASE_NAME }} \
+            --from-literal=POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
+            --from-literal=POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
+            --from-literal=DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+            --from-literal=DATABASE_NAME="${{ secrets.DATABASE_NAME }}" \
             --namespace=${{ env.NAMESPACE }} \
             --dry-run=client -o yaml | kubectl apply -f -
 
