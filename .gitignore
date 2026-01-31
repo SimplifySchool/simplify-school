@@ -49,7 +49,12 @@ go.work
 go.work.sum
 
 # env file
-.env
+.env*
 
 # db data
 pgdata
+
+junit.xml
+coverage.xml
+coverage
+coverage/

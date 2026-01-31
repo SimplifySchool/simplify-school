@@ -1,0 +1,71 @@
+name: Frontend Checks
+
+on:
+  pull_request:
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend.yaml"
+
+defaults:
+  run:
+    working-directory: ./frontend
+
+jobs:
+  lint:
+    name: Lint Frontend Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "24"
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Linter
+        run: npm run lint -- --format stylish
+  test:
+    name: Run Frontend Tests
+
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      checks: write
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "24"
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Tests
+        run: npm test
+
+      - name: Debug File Generation
+        if: always()
+        run: |
+          ls -la
+          ls -la frontend/
+
+      - name: Upload Test Report
+        uses: dorny/test-reporter@v2
+        if: always()
+        with:
+          name: Frontend Test Results
+          path: frontend/junit.xml
+          reporter: jest-junit
+          fail-on-error: false
+          fail-on-empty: false

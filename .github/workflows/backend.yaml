@@ -1,0 +1,88 @@
+name: Backend Checks
+
+on:
+  pull_request:
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend.yaml"
+
+defaults:
+  run:
+    working-directory: ./backend
+
+jobs:
+  lint:
+    name: Lint Backend Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.25"
+      - name: Install Dependencies
+        run: go mod download
+      - name: Run Linter
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: latest
+          working-directory: ./backend
+          args: --timeout 5m
+
+  test:
+    name: Run Backend Tests
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      checks: write
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.25"
+
+      - name: Install Dependencies
+        run: go mod download
+
+      - name: Run Tests
+        run: go test --coverprofile=coverage -json ./... > testresults.json
+        continue-on-error: true
+
+      - name: Debug File Generation
+        run: |
+          echo "Listing backend directory:"
+          ls -la
+          echo "--------------------------------"
+          echo "Checking testresults.json content size:"
+          du -h testresults.json
+          echo "--------------------------------"
+          echo "First 10 lines of JSON:"
+          head -n 10 testresults.json
+
+      - name: Enforce Min Coverage
+        run: |
+          COVERAGE=$(go tool cover -func=coverage.out | grep total | grep -Eo '[0-9]+\.[0-9]+')
+          echo "Current Coverage: $COVERAGE%"
+          if (( $(echo "$COVERAGE < 80.0" | bc -l) )); then
+            echo "Error: Coverage is below 80%!"
+            exit 1
+          fi
+
+      - name: Upload Test Report
+        uses: dorny/test-reporter@v2
+        if: always()
+        with:
+          name: Backend Test Results
+          working-directory: backend
+          path: testresults.json
+          reporter: golang-json
+          fail-on-error: false

@@ -18,7 +18,7 @@ func NewHandler(service *Service) *Handler {
 // SyncUser syncs Auth0 user to local database
 func (h *Handler) SyncUser(ctx *fiber.Ctx) error {
 	// Verify JWT token is present
-	token, ok := ctx.Locals("token").(*validator.ValidatedClaims)
+	token, ok := ctx.Locals("claims").(*validator.ValidatedClaims)
 	if !ok {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Unauthorized.",

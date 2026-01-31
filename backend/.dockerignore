@@ -1,0 +1,27 @@
+# Version Control
+.git
+.gitignore
+
+# Local Build Artifacts & Binaries
+bin/
+dist/
+build/
+*.exe
+*.test
+*.out
+# "main" is the common default binary name on Linux/Mac
+main
+
+# IDE & Editor Directories
+.vscode/
+.idea/
+.DS_Store
+
+# Environment Variables (CRITICAL SECURITY)
+# Never bake your local secrets into the image
+.env
+*.env
+
+# Docker Metadata
+Dockerfile
+docker-compose.yml

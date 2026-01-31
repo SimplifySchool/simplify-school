@@ -3,7 +3,6 @@ interface DialogProps {
     onClose: () => void
 
     closeOnBackdropClick?: boolean
-    closeOnEsc?: boolean
 
     backgroundColor?: string
 
@@ -20,7 +19,6 @@ export function Dialog({
     open,
     onClose,
     closeOnBackdropClick = true,
-    closeOnEsc = true,
     backgroundColor = 'bg-white',
     extraBackdropClassNames = '',
     extraDialogBoxClassNames = '',

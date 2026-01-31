@@ -7,14 +7,18 @@
         "dev": "vite",
         "build": "tsc -b && vite build",
         "lint": "eslint .",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "test": "vitest run --reporter=junit --outputFile=junit.xml",
+        "start": "serve -s dist"
     },
     "dependencies": {
         "@auth0/auth0-react": "^2.11.0",
         "date-fns": "^4.1.0",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
-        "react-router-dom": "^7.13.0"
+        "react-router-dom": "^7.13.0",
+        "serve": "^14.2.5",
+        "vitest": "^4.0.16"
     },
     "devDependencies": {
         "@eslint/js": "^9.39.1",
@@ -23,6 +27,7 @@
         "@types/react": "^19.2.9",
         "@types/react-dom": "^19.2.3",
         "@vitejs/plugin-react": "^5.1.1",
+        "@vitest/coverage-v8": "^4.0.16",
         "autoprefixer": "^10.4.23",
         "eslint": "^9.39.2",
         "eslint-config-prettier": "^10.1.8",

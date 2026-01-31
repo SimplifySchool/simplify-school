@@ -1,0 +1,97 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: simplify-school
+---
+# Note: Secrets are created by the GitHub Actions workflow
+# from GitHub repository secrets, not stored in this file
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: simplify-school
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: simplifyschoolacr.azurecr.io/simplify-school-backend:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: POSTGRES_PASSWORD
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: DATABASE_URL
+            - name: DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: DATABASE_NAME
+            - name: SERVER_PORT
+              value: "3000"
+            - name: CORS_ORIGINS
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: CORS_ORIGINS
+            - name: AUTH0_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: AUTH0_DOMAIN
+            - name: AUTH0_AUDIENCE
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: AUTH0_AUDIENCE
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: 3000
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: simplify-school
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 80
+      targetPort: 3000
+  type: ClusterIP
