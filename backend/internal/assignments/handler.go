@@ -26,7 +26,7 @@ func NewHandler(service *Service, userService *users.Service) *Handler {
 // getAuthenticatedUserID extracts the user's Auth0 ID from the JWT token and retrieves their database ID
 func (h *Handler) getAuthenticatedUserID(c *fiber.Ctx) (int, error) {
 	// Extract validated claims from context
-	token, ok := c.Locals("token").(*validator.ValidatedClaims)
+	token, ok := c.Locals("claims").(*validator.ValidatedClaims)
 	if !ok {
 		return 0, fiber.NewError(fiber.StatusUnauthorized, "Unauthorized")
 	}
