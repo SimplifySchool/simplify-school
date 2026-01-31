@@ -11,7 +11,11 @@ This guide will help you deploy the Simplify School backend to Azure Kubernetes 
 
 ## Setup Instructions
 
-### 1. Configure GitHub Secrets
+### 1. Create a Managed Identity
+
+Create a managed identity resource and add it to all your resources.
+
+### 2. Configure GitHub Secrets
 
 You need to add the following secrets to your GitHub repository:
 
@@ -19,27 +23,21 @@ Go to: `Settings` → `Secrets and variables` → `Actions` → `New repository 
 
 #### Required Secrets:
 
-1. **AZURE_CREDENTIALS** - Azure Service Principal credentials
+1. **AZURE_CLIENT_ID** - Azure Managed ID Client ID
 
-   ```bash
-   # Create a service principal and get credentials
-   az ad sp create-for-rbac --name "simplify-school-github-actions" \
-     --role contributor \
-     --scopes /subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP_NAME> \
-     --sdk-auth
-   ```
+2. **AZURE_TENANT_ID** - Azure Tenant ID of the User the Managed Identity belongs to
 
-   Copy the entire JSON output and paste it as the secret value.
+3. **AZURE_SUBSCIPTION_ID** - Azure Subscription ID of the Managed Identity
 
-2. **POSTGRES_USER** - PostgreSQL username from your Azure Database for PostgreSQL
+4. **POSTGRES_USER** - PostgreSQL username from your Azure Database for PostgreSQL
 
-3. **POSTGRES_PASSWORD** - PostgreSQL password from your Azure Database for PostgreSQL
+5. **POSTGRES_PASSWORD** - *URL-Encoded* PostgreSQL password from your Azure Database for PostgreSQL
 
-4. **POSTGRES_HOST** - Azure PostgreSQL hostname (e.g., `myserver.postgres.database.azure.com`)
+6. **POSTGRES_HOST** - Azure PostgreSQL hostname (e.g., `myserver.postgres.database.azure.com`)
 
-5. **POSTGRES_DB** - Database name (e.g., `postgres` or your custom database name)
+7. **POSTGRES_DB** - Database name (e.g., `postgres` or your custom database name)
 
-### 2. Update Configuration Files
+### 3. Update Configuration Files
 
 #### Update k8s/k8s-deployment.yaml:
 
@@ -65,7 +63,7 @@ env:
   AKS_RESOURCE_GROUP: <your-aks-resource-group>
 ```
 
-### 3. Grant AKS Access to ACR
+### 4. Grant AKS Access to ACR
 
 Your AKS cluster needs permission to pull images from your ACR:
 
@@ -80,7 +78,7 @@ KUBELET_ID=$(az aks show --name <your-aks-cluster-name> --resource-group <your-r
 az role assignment create --assignee $KUBELET_ID --scope $ACR_ID --role AcrPull
 ```
 
-### 4. Configure Azure PostgreSQL Firewall
+### 5. Configure Azure PostgreSQL Firewall
 
 Ensure your Azure Database for PostgreSQL allows connections from your AKS cluster:
 
@@ -96,7 +94,7 @@ az postgres server firewall-rule create \
 
 Note: For better security, you can restrict access to your AKS cluster's outbound IP addresses instead of allowing all Azure services.
 
-### 5. Deploy Manually (First Time)
+### 6. Deploy Manually (First Time)
 
 For the first deployment, you may want to deploy manually to ensure everything is configured correctly:
 
@@ -128,7 +126,7 @@ kubectl get all -n simplify-school
 kubectl get service backend-service -n simplify-school
 ```
 
-### 6. Trigger Automated Deployment
+### 7. Trigger Automated Deployment
 
 Once configured, the GitHub Action will automatically deploy when you:
 
@@ -172,10 +170,8 @@ The backend will be accessible at: `http://<EXTERNAL-IP>/assignments`
 ## Important Notes
 
 1. **Production Considerations:**
-   - The current setup uses a LoadBalancer service type which will create an Azure Load Balancer (additional cost)
-   - Consider using an Ingress controller for production (e.g., NGINX Ingress)
+   - Use an Ingress controller for production (e.g., NGINX Ingress)
    - Update the CORS configuration in your Go backend to allow your frontend domain
-   - Configure SSL/TLS for secure connections to Azure Database for PostgreSQL
 
 2. **Security:**
    - Store sensitive data in GitHub Secrets (never commit secrets to the repository)
