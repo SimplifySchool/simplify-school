@@ -21,7 +21,6 @@ func NewHandler(service *Service, userService *users.Service) *Handler {
 	}
 }
 
-// getAuthenticatedUserID extracts the user's Auth0 ID from the JWT token and retrieves their database ID
 func (h *Handler) getAuthenticatedUserID(c *fiber.Ctx) (int, error) {
 	token, ok := c.Locals("claims").(*validator.ValidatedClaims)
 	if !ok {
@@ -69,7 +68,6 @@ func (h *Handler) CreateGroup(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(res)
 }
 
-// GetUserGroups returns all study groups the authenticated user belongs to
 func (h *Handler) GetUserGroups(c *fiber.Ctx) error {
 	userID, err := h.getAuthenticatedUserID(c)
 	if err != nil {
@@ -81,7 +79,6 @@ func (h *Handler) GetUserGroups(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
-	// Return empty array instead of null when there are no groups
 	if groups == nil {
 		groups = []StudyGroup{}
 	}
@@ -104,8 +101,6 @@ func (h *Handler) GetUserGroups(c *fiber.Ctx) error {
 	return c.JSON(res)
 }
 
-// GetGroupDetail returns detailed info about a study group including members and their assignment stats.
-// Only accessible to members of the group.
 func (h *Handler) GetGroupDetail(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 	groupID, err := strconv.Atoi(idParam)
@@ -118,7 +113,6 @@ func (h *Handler) GetGroupDetail(c *fiber.Ctx) error {
 		return err
 	}
 
-	// Membership validation: only members can view group details
 	isMember, err := h.service.IsUserMemberOfGroup(c.Context(), groupID, userID)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())

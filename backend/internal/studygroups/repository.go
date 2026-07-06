@@ -67,7 +67,6 @@ func (r *Repository) GetGroupsByUser(ctx context.Context, userID int) ([]StudyGr
 	return groups, nil
 }
 
-// IsUserMemberOfGroup checks whether a user belongs to a study group
 func (r *Repository) IsUserMemberOfGroup(ctx context.Context, groupID int, userID int) (bool, error) {
 	query := `SELECT COUNT(*) FROM study_group_members WHERE study_group_id = $1 AND user_id = $2`
 	var count int
@@ -78,7 +77,6 @@ func (r *Repository) IsUserMemberOfGroup(ctx context.Context, groupID int, userI
 	return count > 0, nil
 }
 
-// GetGroupMembers returns all members (user info) of a study group
 func (r *Repository) GetGroupMembers(ctx context.Context, groupID int) ([]MemberResponse, error) {
 	query := `
 		SELECT u.id, u.name, u.email
@@ -107,8 +105,6 @@ func (r *Repository) GetGroupMembers(ctx context.Context, groupID int) ([]Member
 	return members, nil
 }
 
-// GetMemberAssignmentStats returns the completed/missing assignment counts for a user.
-// "Done" = completed, "To Do" or "Doing" = missing.
 func (r *Repository) GetMemberAssignmentStats(ctx context.Context, userID int) (*AssignmentStats, error) {
 	query := `
 		SELECT
