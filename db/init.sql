@@ -16,6 +16,20 @@ CREATE TABLE IF NOT EXISTS assignments (
     completion_status ASSIGNMENT_STATUS DEFAULT 'To Do',
     due_date TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user_id INT REFERENCES users(id)
+    user_id INT REFERENCES users (id)
 );
 
+CREATE TABLE IF NOT EXISTS study_groups (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    admin_id INT REFERENCES users (id)
+);
+
+CREATE TABLE IF NOT EXISTS study_group_members (
+    id SERIAL PRIMARY KEY,
+    study_group_id INT REFERENCES study_groups (id),
+    user_id INT REFERENCES users (id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

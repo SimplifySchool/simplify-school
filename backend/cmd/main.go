@@ -9,6 +9,7 @@ import (
 	"github.com/SimplifySchool/simplify-school/backend/internal/assignments"
 	"github.com/SimplifySchool/simplify-school/backend/internal/auth"
 	"github.com/SimplifySchool/simplify-school/backend/internal/config"
+	"github.com/SimplifySchool/simplify-school/backend/internal/studygroups"
 	"github.com/SimplifySchool/simplify-school/backend/internal/users"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -105,6 +106,15 @@ func main() {
 	api.Post("/assignments", jwtMiddleware, handler.CreateAssignment)
 	api.Delete("/assignments/:id", jwtMiddleware, handler.DeleteAssignment)
 	api.Put("/assignments/:id", jwtMiddleware, handler.PutAssignment)
+
+	sgRepo := studygroups.NewRepository(pgxConn)
+	sgService := studygroups.NewService(sgRepo)
+	sgHandler := studygroups.NewHandler(sgService, userModule.Service)
+
+	api.Get("/study-groups", jwtMiddleware, sgHandler.GetUserGroups)
+	api.Get("/study-groups/:id", jwtMiddleware, sgHandler.GetGroupDetail)
+	api.Post("/study-groups", jwtMiddleware, sgHandler.CreateGroup)
+
 
 	serverPort := os.Getenv("SERVER_PORT")
 	if serverPort == "" {

@@ -31,6 +31,14 @@ function App() {
         void navigate('/assignments')
     }
 
+    function sendToStudyGroupsPage() {
+        if (!isAuthenticated) {
+            void navigate('/')
+            return
+        }
+        void navigate('/study-groups')
+    }
+
     const { isAuthenticated, isLoading, error, user } = useAuth0()
     const { callApi } = useApi()
 
@@ -111,6 +119,12 @@ function App() {
                                         onClick={sendToAssignmentsPage}
                                     >
                                         Assignments
+                                    </Button>
+                                    <Button
+                                        variant="tonal"
+                                        onClick={sendToStudyGroupsPage}
+                                    >
+                                        Study Groups
                                     </Button>
                                     <Button
                                         variant="tonal"
