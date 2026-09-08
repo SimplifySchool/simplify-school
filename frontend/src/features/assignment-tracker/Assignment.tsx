@@ -7,6 +7,7 @@ import { DialogContent } from '../../components/DialogBox/DialogContent'
 import { TextField } from '../../components/TextField'
 import { DialogFooter } from '../../components/DialogBox/DialogFooter'
 import type { AssignmentData, AssignmentModifiable } from './AssignmentPage'
+import DeleteAssignmentDialogBox from './DeleteAssignmentDialogBox'
 
 const apiURL = import.meta.env.VITE_API_URL as string
 
@@ -27,6 +28,7 @@ function Assignment({
     dueDate = 'No date set',
     onDelete,
 }: AssignmentProps) {
+    const [deleteOpen, setDeleteOpen] = useState(false)
     const [status, setStatus] = useState<AssignmentStatus>('To Do')
     const [visible, setVisible] = useState(false) // For the dialog box
     const [draftName, setDraftName] = useState(initialName)
@@ -35,6 +37,16 @@ function Assignment({
     const [assignmentDesc, setAssignmentDesc] = useState(desc)
     const [textError, setTextError] = useState('')
     const [descError, setDescError] = useState('')
+
+    let showAgain = true
+
+    function hideDeleteAssignmentDialog() {
+        setDeleteOpen(false)
+    }
+
+    function showDeleteAssignmentDialog() {
+        setDeleteOpen(true)
+    }
 
     async function modifyAssignment(payload: AssignmentModifiable) {
         const res = await fetch(`${apiURL}/assignments/${id}`, {
@@ -125,6 +137,14 @@ function Assignment({
         setVisible(false)
     }
 
+    function deleteAssignment() {
+        if (showAgain) {
+            showDeleteAssignmentDialog()
+        } else {
+            onDelete()
+        }
+    }
+
     return (
         <>
             <div className="flex items-center justify-between p-4 h-20 bg-white border rounded-4xl border-slate-200 hover:shadow-lg transition-colors shadow-xl">
@@ -178,13 +198,18 @@ function Assignment({
                                 </span>
                             }
                             iconPosition="left"
-                            onClick={onDelete}
+                            onClick={deleteAssignment}
                         ></Button>
                     </div>
                 </div>
             </div>
 
-            <Dialog open={visible} onClose={hideEditDialog}>
+            <Dialog
+                open={visible}
+                onClose={hideEditDialog}
+                backgroundColor="bg-white"
+                extraDialogBoxClassNames="w-100! h-98!"
+            >
                 <DialogHeader
                     title={
                         <span>
@@ -194,29 +219,31 @@ function Assignment({
                             </span>
                         </span>
                     }
-                    titleProperties="flex text-lg font-semibold justify-start px-3"
-                    underlinedSeperator={true}
+                    titleProperties="flex text-lg font-semibold justify-center"
+                    underlinedSeperator={false}
                 >
                     <Button
                         variant="outlined"
                         size="sm"
-                        className="absolute w-8 m-1.25 text-lg! top-0 right-0 text-black! material-symbols-outlined px-1!"
+                        className="absolute w-8 m-1.25 text-lg! top-0 border-0 right-0 text-black! material-symbols-outlined px-1! hover:bg-transparent"
                         onClick={hideEditDialog}
                     >
                         close
                     </Button>
                 </DialogHeader>
 
-                <DialogContent>
-                    <div className="flex flex-col items-start gap-7 my-4 mx-2">
+                <DialogContent extraClassNames="px-0!">
+                    <div className="flex flex-col items-start gap-4 my-4 mx-5">
                         <div className="flex flex-col gap-1">
                             <h2 className="text-left px-2">Assignment Name</h2>
                             <TextField
-                                className="w-45! focus:border-blue-400!"
+                                variant="outlined"
+                                className="w-90! focus:border-blue-400! shadow-md"
                                 placeholder="Name"
                                 onChange={(e) =>
                                     changeDraftName(e.target.value)
                                 }
+                                error={textError}
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
                                         saveAndExit(draftName, draftDesc).catch(
@@ -224,7 +251,6 @@ function Assignment({
                                         )
                                     }
                                 }}
-                                error={textError}
                             ></TextField>
                         </div>
                         <div className="flex items-start flex-col gap-1">
@@ -232,8 +258,13 @@ function Assignment({
                                 Assignment Description
                             </h2>
                             <TextField
-                                className="w-45! focus:border-blue-400!"
+                                variant="outlined"
+                                className="w-90! focus:border-blue-400! shadow-md"
                                 placeholder="Desc"
+                                onChange={(e) =>
+                                    changeDraftDesc(e.target.value)
+                                }
+                                error={descError}
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
                                         saveAndExit(draftName, draftDesc).catch(
@@ -241,25 +272,37 @@ function Assignment({
                                         )
                                     }
                                 }}
-                                onChange={(e) =>
-                                    changeDraftDesc(e.target.value)
-                                }
-                                error={descError}
                             ></TextField>
                         </div>
                     </div>
                 </DialogContent>
 
                 <DialogFooter>
-                    <Button
-                        variant="outlined"
-                        className="absolute bottom-5 right-5 font-bold! text-black! "
-                        onClick={() => void saveAndExit(draftName, draftDesc)}
-                    >
-                        Save & Exit
-                    </Button>
+                    <div className="absolute flex justify-center w-full bg-amber-0 px-4 flex-row gap-3 right-0 bottom-5">
+                        <Button
+                            variant="outlined"
+                            className="grow font-bold! text-black!"
+                            onClick={hideEditDialog}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="contained"
+                            className="text-white! grow bg-linear-to-t from-blue-500 to-blue-400 hover:bg-linear-r! hover:from-blue-500/80! hover:to-blue-400/80! font-bold!"
+                            onClick={() =>
+                                void saveAndExit(draftName, draftDesc)
+                            }
+                        >
+                            Save
+                        </Button>
+                    </div>
                 </DialogFooter>
             </Dialog>
+
+            <DeleteAssignmentDialogBox
+                open={deleteOpen}
+                onClose={hideDeleteAssignmentDialog}
+            />
         </>
     )
 }

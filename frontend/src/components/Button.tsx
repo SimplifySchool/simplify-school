@@ -6,7 +6,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
     iconOnly?: boolean
     variant?: 'contained' | 'outlined' | 'text' | 'tonal'
     color?: 'primary' | 'secondary'
-    size?: 'sm' | 'md' | 'lg'
+    size?: 'sm' | 'md' | 'lg' | 'n'
     children?: React.ReactNode
 }
 
@@ -51,12 +51,14 @@ export function Button({
     }
 
     const sizes = {
+        n: '',
         sm: 'h-8 px-4 text-xs',
         md: 'h-10 px-6 text-sm',
         lg: 'h-12 px-8 text-base',
     }
 
     const iconOnlySizes = {
+        n: '',
         sm: 'h-8 w-8',
         md: 'h-10 w-10',
         lg: 'h-12 w-12',

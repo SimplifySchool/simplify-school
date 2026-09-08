@@ -172,37 +172,43 @@ export function AssignmentPage() {
             <div>
                 {' '}
                 {/*MAKE THIS INTO ANOTHER FILE LATER TOO LAZY RIGHT NOW */}
-                <Dialog open={initDialogBoxStatus} onClose={hideEditDialog}>
+                <Dialog
+                    open={initDialogBoxStatus}
+                    onClose={hideEditDialog}
+                    backgroundColor="bg-white"
+                    extraDialogBoxClassNames="w-100! h-98!"
+                >
                     <DialogHeader
                         title={
                             <span>
-                                Editing Assignment:{` `}
+                                Creating Assignment:{` `}
                                 <span className="italic underline">
                                     {initialAssignmentName}
                                 </span>
                             </span>
                         }
-                        titleProperties="flex text-lg font-semibold justify-start px-3"
-                        underlinedSeperator={true}
+                        titleProperties="flex text-lg font-semibold justify-center"
+                        underlinedSeperator={false}
                     >
                         <Button
                             variant="outlined"
                             size="sm"
-                            className="absolute w-8 m-1.25 text-lg! top-0 right-0 text-black! material-symbols-outlined px-1!"
+                            className="absolute w-8 m-1.25 text-lg! top-0 border-0 right-0 text-black! material-symbols-outlined px-1! hover:bg-transparent"
                             onClick={hideEditDialog}
                         >
                             close
                         </Button>
                     </DialogHeader>
 
-                    <DialogContent>
-                        <div className="flex flex-col items-start gap-7 my-4 mx-2">
+                    <DialogContent extraClassNames="px-0!">
+                        <div className="flex flex-col items-start gap-4 my-4 mx-5">
                             <div className="flex flex-col gap-1">
                                 <h2 className="text-left px-2">
                                     Assignment Name
                                 </h2>
                                 <TextField
-                                    className="w-45! focus:border-blue-400!"
+                                    variant="outlined"
+                                    className="w-90! focus:border-blue-400! shadow-md"
                                     placeholder="Name"
                                     onChange={(e) =>
                                         changeDraftName(e.target.value)
@@ -223,7 +229,8 @@ export function AssignmentPage() {
                                     Assignment Description
                                 </h2>
                                 <TextField
-                                    className="w-45! focus:border-blue-400!"
+                                    variant="outlined"
+                                    className="w-90! focus:border-blue-400! shadow-md"
                                     placeholder="Desc"
                                     onChange={(e) =>
                                         changeDraftDesc(e.target.value)
@@ -243,15 +250,24 @@ export function AssignmentPage() {
                     </DialogContent>
 
                     <DialogFooter>
-                        <Button
-                            variant="outlined"
-                            className="absolute bottom-5 right-5 font-bold! text-black! "
-                            onClick={() =>
-                                void saveAndExit(draftName, draftDesc)
-                            }
-                        >
-                            Save & Exit
-                        </Button>
+                        <div className="absolute flex justify-center w-full bg-amber-0 px-4 flex-row gap-3 right-0 bottom-5">
+                            <Button
+                                variant="outlined"
+                                className="grow font-bold! text-black!"
+                                onClick={hideEditDialog}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="contained"
+                                className="text-white! grow bg-blue-500! hover:bg-blue-600! font-bold! text-black!"
+                                onClick={() =>
+                                    void saveAndExit(draftName, draftDesc)
+                                }
+                            >
+                                Save
+                            </Button>
+                        </div>
                     </DialogFooter>
                 </Dialog>
             </div>
