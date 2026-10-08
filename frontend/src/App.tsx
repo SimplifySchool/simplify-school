@@ -3,6 +3,7 @@ import './App.css'
 import { AssignmentPage } from './features/assignment-tracker/AssignmentPage'
 import { SchedulePage } from './features/schedule/SchedulePage'
 import Button from './components/Button'
+import { LoginPage } from './features/login-page/LoginPage'
 
 type onePage = 'homepage' | 'schedule' | 'assignments'
 
@@ -36,7 +37,7 @@ function App() {
             case 'assignments':
                 return <AssignmentPage />
             case 'homepage':
-                return getTempHomePage()
+                return <LoginPage />
             case 'schedule':
                 return <SchedulePage />
         }

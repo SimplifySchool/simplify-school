@@ -144,7 +144,7 @@ export function AssignmentPage() {
     return (
         <>
             <div className="flex flex-col gap-20">
-                <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-10">
                     <h2 className="border-b text-left text-xl font-bold">
                         Your Assignments:
                     </h2>
